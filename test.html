@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AdultingQuest RPG</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Nunito:wght@400;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #0a0a1a;
+    color: #e8e0ff;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bg {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, #1a0533 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, #0d1a3a 0%, transparent 60%),
+                #060612;
+    z-index: 0;
+  }
+
+  .stars {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 10%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 70%, rgba(255,255,255,0.5) 0%, transparent 100%);
+  }
+
+  .screen { display: none; position: relative; z-index: 1; width: 100%; height: 100vh; align-items: center; justify-content: center; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  /* HOME */
+  #home h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa, #f472b6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+  #home p { color: #9ca3af; margin-bottom: 2rem; text-align: center; }
+
+  .btn {
+    padding: 12px 28px; border-radius: 12px; border: none;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: white; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(124,58,237,0.6); }
+  .btn:active { transform: translateY(0); }
+
+  /* STORY */
+  #story { padding: 0; position: relative; }
+  #postStory { padding: 0; position: relative; }
+
+  .scene-container {
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 0;
+  }
+
+  .scene-container video {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .scene-container video.visible { opacity: 1; }
+
+  .scene-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 40%, rgba(0,0,0,0.75) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .story-box {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(700px, 92vw);
+    background: rgba(6,6,18,0.82);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 24px 28px 20px;
+    backdrop-filter: blur(16px);
+    z-index: 2;
+  }
+  .story-speaker {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+    color: #a78bfa; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .story-text {
+    font-size: 1.05rem; line-height: 1.7; color: #e8e0ff; min-height: 56px;
+  }
+  .story-btn-row { margin-top: 18px; text-align: right; }
+
+  /* MCQ */
+  #mcq { padding: 20px; }
+  .mcq-box {
+    width: min(680px, 95vw);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px; padding: 28px;
+    backdrop-filter: blur(12px);
+  }
+  .mcq-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #f472b6; text-transform: uppercase; margin-bottom: 12px; }
+  .mcq-q { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
+  .mcq-choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice-btn {
+    padding: 12px 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06); color: #e8e0ff;
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; text-align: left; transition: background 0.2s, border-color 0.2s;
+  }
+  .choice-btn:hover { background: rgba(124,58,237,0.25); border-color: #7c3aed; }
+  .choice-btn.selected { background: rgba(124,58,237,0.35); border-color: #a78bfa; }
+  .mcq-feedback { margin-top: 14px; font-size: 0.9rem; color: #86efac; min-height: 20px; }
+  .mcq-continue { margin-top: 16px; display: none; }
+
+  /* POST-MCQ STORY */
+  #postStory { padding: 20px; flex-direction: column; }
+
+  /* BOSS CHAT */
+  #boss { padding: 20px; }
+  .boss-wrapper { width: min(720px, 95vw); display: flex; flex-direction: column; height: 85vh; }
+
+  .boss-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px 16px 0 0;
+    backdrop-filter: blur(12px);
+  }
+  .boss-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #f472b6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex-shrink: 0;
+    box-shadow: 0 0 16px rgba(124,58,237,0.6);
+  }
+  .boss-name { font-family: 'Cinzel', serif; font-size: 1rem; color: #a78bfa; }
+  .boss-status { font-size: 0.75rem; color: #6ee7b7; }
+  .boss-stage-indicator {
+    margin-left: auto; font-size: 0.75rem; color: #9ca3af;
+    background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px;
+  }
+
+  .chat-log {
+    flex: 1; overflow-y: auto; padding: 20px;
+    background: rgba(0,0,0,0.3);
+    border-left: 1px solid rgba(255,255,255,0.06);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    display: flex; flex-direction: column; gap: 16px;
+    scroll-behavior: smooth;
+  }
+  .chat-log::-webkit-scrollbar { width: 4px; }
+  .chat-log::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.4); border-radius: 4px; }
+
+  .msg { display: flex; gap: 10px; max-width: 85%; animation: fadeUp 0.3s ease; }
+  .msg.gm { align-self: flex-start; }
+  .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+
+  @keyframes fadeUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+  .msg-avatar {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+  }
+  .msg.gm .msg-avatar { background: linear-gradient(135deg, #7c3aed, #f472b6); box-shadow: 0 0 10px rgba(124,58,237,0.4); }
+  .msg.user .msg-avatar { background: linear-gradient(135deg, #0ea5e9, #6ee7b7); }
+
+  .msg-bubble { padding: 12px 16px; border-radius: 14px; font-size: 0.93rem; line-height: 1.6; }
+  .msg.gm .msg-bubble {
+    background: rgba(124,58,237,0.18);
+    border: 1px solid rgba(124,58,237,0.3);
+    border-top-left-radius: 4px; color: #e8e0ff;
+  }
+  .msg.user .msg-bubble {
+    background: rgba(14,165,233,0.18);
+    border: 1px solid rgba(14,165,233,0.3);
+    border-top-right-radius: 4px; color: #e0f2fe;
+  }
+
+  .typing-indicator { display: flex; gap: 4px; align-items: center; padding: 14px 16px; }
+  .typing-dot { width: 7px; height: 7px; border-radius: 50%; background: #a78bfa; animation: bounce 1.2s infinite; }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0);} 30%{transform:translateY(-6px);} }
+
+  .chat-input-area {
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    backdrop-filter: blur(12px);
+    display: flex; gap: 10px; align-items: flex-end;
+  }
+  .chat-input-area textarea {
+    flex: 1; background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px; padding: 12px 14px;
+    color: #e8e0ff; font-family: 'Nunito', sans-serif; font-size: 0.93rem;
+    resize: none; outline: none; min-height: 44px; max-height: 120px;
+    line-height: 1.5; transition: border-color 0.2s;
+  }
+  .chat-input-area textarea:focus { border-color: #7c3aed; }
+  .chat-input-area textarea::placeholder { color: #6b7280; }
+  .send-btn {
+    width: 44px; height: 44px; border-radius: 12px; border: none;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: white; font-size: 1.1rem; cursor: pointer;
+    flex-shrink: 0; transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 14px rgba(124,58,237,0.4);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .send-btn:hover { transform: scale(1.08); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .next-row { margin-top: 12px; text-align: center; }
+
+  /* END */
+  #end .end-box {
+    text-align: center; padding: 40px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px; backdrop-filter: blur(12px);
+    width: min(480px, 90vw);
+  }
+  .trophy { font-size: 4rem; margin-bottom: 16px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
+  #end h2 { font-family: 'Cinzel', serif; font-size: 1.8rem; color: #fbbf24; margin-bottom: 12px; }
+  #end p { color: #9ca3af; line-height: 1.7; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="stars"></div>
+
+<!-- HOME -->
+<div id="home" class="screen active">
+  <h1>🎮 AdultingQuest</h1>
+  <p>Consent & Boundaries Module</p>
+  <button class="btn" onclick="startStory()">Start Module</button>
+</div>
+
+<!-- STORY (intro scenes) -->
+<div id="story" class="screen">
+  <div class="scene-container">
+    <video id="mainVideo" autoplay muted playsinline loop></video>
+    <div class="scene-overlay"></div>
+  </div>
+  <div class="story-box">
+    <div class="story-speaker" id="speaker"></div>
+    <div class="story-text" id="dialogue"></div>
+    <div class="story-btn-row">
+      <button class="btn" id="storyBtn" onclick="advanceStory()">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MCQ -->
+<div id="mcq" class="screen">
+  <div class="mcq-box">
+    <div class="mcq-label">⚔️ Decision Point</div>
+    <div class="mcq-q">What should you do in this situation?</div>
+    <div class="mcq-choices">
+      <button class="choice-btn" onclick="mcq(this,1)">😬 Go along to avoid awkwardness</button>
+      <button class="choice-btn" onclick="mcq(this,2)">✋ Clearly say NO and leave</button>
+      <button class="choice-btn" onclick="mcq(this,3)">😶 Stay quiet and avoid responding</button>
+    </div>
+    <div class="mcq-feedback" id="mcqFb"></div>
+    <div class="mcq-continue" id="mcqContinue">
+      <button class="btn" onclick="startPostStory()">Continue Story →</button>
+    </div>
+  </div>
+</div>
+
+<!-- POST-MCQ STORY (path-specific scenes) -->
+<div id="postStory" class="screen">
+  <div class="scene-container">
+    <video id="postVideo" autoplay muted playsinline loop></video>
+    <div class="scene-overlay"></div>
+  </div>
+  <div class="story-box">
+    <div class="story-speaker" id="postSpeaker"></div>
+    <div class="story-text" id="postDialogue"></div>
+    <div class="story-btn-row">
+      <button class="btn" id="postStoryBtn" onclick="advancePostStory()">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOSS CHAT -->
+<div id="boss" class="screen">
+  <div class="boss-wrapper">
+    <div class="boss-header">
+      <div class="boss-avatar">🧙</div>
+      <div>
+        <div class="boss-name">Game Master</div>
+        <div class="boss-status">● Online</div>
+      </div>
+      <div class="boss-stage-indicator" id="stageLabel">Round 1 / 2</div>
+    </div>
+    <div class="chat-log" id="chatLog"></div>
+    <div class="chat-input-area" id="inputArea">
+      <textarea id="chatInput" placeholder="Type your answer..." rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendUserMsg()">➤</button>
+    </div>
+    <div class="next-row" id="nextRow" style="display:none">
+      <button class="btn" onclick="goToEnd()">🏆 Complete Module</button>
+    </div>
+  </div>
+</div>
+
+<!-- END -->
+<div id="end" class="screen">
+  <div class="end-box">
+    <div class="trophy">🏆</div>
+    <h2>Boss Cleared!</h2>
+    <p>You've shown a strong understanding of consent and boundaries. Remember: real consent is clear, enthusiastic, and ongoing. You have the knowledge to protect yourself and support others.</p>
+    <button class="btn" onclick="location.reload()">Play Again</button>
+  </div>
+</div>
+
+<script>
+/* ========== VIDEO HELPERS ========== */
+const VIDEOS = {
+  scene1: "scene1.mp4",
+  scene2: "scene2.mp4",
+  placeholder: "placeholder.mp4"
+};
+
+function setVideo(videoEl, key){
+  const src = VIDEOS[key] || "";
+  videoEl.src = src;
+  videoEl.classList.remove("visible");
+  if(src){
+    videoEl.load();
+    videoEl.play().then(()=> videoEl.classList.add("visible")).catch(()=>{});
+  }
+}
+
+/* ========== TYPEWRITER ========== */
+let typingTimer;
+function typeText(el, text, speed=22){
+  clearInterval(typingTimer); el.textContent=""; let i=0;
+  typingTimer = setInterval(()=>{
+    if(i < text.length){ el.textContent += text[i]; i++; }
+    else clearInterval(typingTimer);
+  }, speed);
+}
+
+/* ========== INTRO SCENES ========== */
+// Each scene: { speaker, text, video:"scene1"|"scene2"|"placeholder", next }
+// next:"mcq" triggers MCQ screen
+const scenes = {
+  start:     { speaker:"Game Master", text:"After your CCA event, people stay behind to hang out. You've been getting closer with someone from the group…", video:"scene1", next:"talk1" },
+  talk1:     { speaker:"Guy",         text:"Hey, you did great today. Want to chill for a bit?", video:"scene1", next:"talk2" },
+  talk2:     { speaker:"You",         text:"Yeah, just for a while.", video:"scene1", next:"move" },
+  move:      { speaker:"Guy",         text:"It's kinda loud here… want to go somewhere quieter?", video:"scene1", next:"park" },
+  park:      { speaker:"Game Master", text:"You arrive at a quieter, more isolated spot. The atmosphere shifts.", video:"scene2", next:"pressure1" },
+  pressure1: { speaker:"Guy",         text:"Relax… it's just us.", video:"scene2", next:"pressure2" },
+  pressure2: { speaker:"You",         text:"I don't really feel comfortable with this…", video:"scene2", next:"pressure3" },
+  pressure3: { speaker:"Guy",         text:"Come on… don't make it weird. It's fine.", video:"scene2", next:"mcq" },
+};
+
+let currentScene = "start";
+let lastVideo = null;
+
+function startStory(){ switchScreen("story"); loadScene("start"); }
+
+function loadScene(key){
+  currentScene = key;
+  const scene = scenes[key];
+  document.getElementById("speaker").textContent = scene.speaker.toUpperCase();
+  typeText(document.getElementById("dialogue"), scene.text);
+
+  const vid = document.getElementById("mainVideo");
+  if(scene.video !== lastVideo){
+    setVideo(vid, scene.video);
+    lastVideo = scene.video;
+  }
+
+  const btn = document.getElementById("storyBtn");
+  if(scene.next === "mcq"){
+    btn.textContent = "Make Your Choice →";
+    btn.onclick = ()=> switchScreen("mcq");
+  } else {
+    btn.textContent = "Continue →";
+    btn.onclick = advanceStory;
+  }
+}
+
+function advanceStory(){
+  const next = scenes[currentScene].next;
+  if(next === "mcq"){ switchScreen("mcq"); return; }
+  loadScene(next);
+}
+
+/* ========== MCQ ========== */
+let chosenPath = "safe"; // default
+
+function mcq(btn, choice){
+  document.querySelectorAll(".choice-btn").forEach(b=>b.classList.remove("selected"));
+  btn.classList.add("selected");
+  const fb = document.getElementById("mcqFb");
+  if(choice===2){ fb.textContent="✅ Strong choice. Setting a clear boundary protects you and sends an unmistakable message."; chosenPath="safe"; }
+  else if(choice===1){ fb.textContent="⚠️ Going along when uncomfortable can blur boundaries and put you at risk."; chosenPath="risky"; }
+  else { fb.textContent="⚠️ Silence can be misread as agreement. Consent needs to be clear and active."; chosenPath="passive"; }
+  document.getElementById("mcqContinue").style.display="block";
+}
+
+/* ========== POST-MCQ PATH SCENES ========== */
+const pathScenes = {
+  safe: [
+    { speaker:"You",         text:"No. I'm not comfortable with this. I'm leaving.", video:"scene2" },
+    { speaker:"Game Master", text:"Setting boundaries is a sign of strength — not weakness. You acted with courage.", video:"placeholder" },
+  ],
+  risky: [
+    { speaker:"Game Master", text:"You go along, even though something feels deeply off inside.", video:"scene2" },
+    { speaker:"Game Master", text:"Remember: support is always available from BABES!. What happened is not your fault.", video:"placeholder" },
+  ],
+  passive: [
+    { speaker:"Game Master", text:"You stay quiet, hoping the situation resolves itself.", video:"scene2" },
+    { speaker:"Game Master", text:"Silence can be misread as consent. Speaking up — even briefly — makes all the difference.", video:"placeholder" },
+  ],
+};
+
+let postIndex = 0;
+let postLastVideo = null;
+
+function startPostStory(){
+  postIndex = 0;
+  postLastVideo = null;
+  switchScreen("postStory");
+  loadPostScene();
+}
+
+function loadPostScene(){
+  const scenes = pathScenes[chosenPath];
+  const scene = scenes[postIndex];
+  document.getElementById("postSpeaker").textContent = scene.speaker.toUpperCase();
+  typeText(document.getElementById("postDialogue"), scene.text);
+
+  const vid = document.getElementById("postVideo");
+  if(scene.video !== postLastVideo){
+    setVideo(vid, scene.video);
+    postLastVideo = scene.video;
+  }
+
+  const btn = document.getElementById("postStoryBtn");
+  const isLast = postIndex === scenes.length - 1;
+  btn.textContent = isLast ? "Face the Boss →" : "Continue →";
+  btn.onclick = advancePostStory;
+}
+
+function advancePostStory(){
+  const scenes = pathScenes[chosenPath];
+  if(postIndex < scenes.length - 1){
+    postIndex++;
+    loadPostScene();
+  } else {
+    switchScreen("boss");
+    initBoss();
+  }
+}
+
+/* ========== BOSS CHAT (LLM) ========== */
+const conversation = [
+  {
+    gmQ: "Why is clear consent important in relationships and social situations? Share your thoughts.",
+    gmReply: (ans) => {
+      const lower = ans.toLowerCase();
+      const good = lower.includes("respect") || lower.includes("safe") || lower.includes("comfort") || lower.includes("right") || lower.includes("trust") || lower.includes("boundar") || lower.includes("protect") || lower.includes("agree") || lower.includes("harm");
+      return good
+        ? "Well said! ✅ Clear consent is the foundation of respect and safety. It ensures everyone involved feels comfortable and valued. Without it, relationships lack trust and people can be harmed. You've understood this well — let's go to Round 2."
+        : "Good attempt! Consent matters because it ensures everyone feels safe and respected. Without clear agreement, one person's discomfort can be ignored — and that can cause real harm. Keep this in mind. Let's move to Round 2.";
+    }
+  },
+  {
+    gmQ: "Why do people sometimes struggle to say no, even when they feel uncomfortable?",
+    gmReply: (ans) => {
+      const lower = ans.toLowerCase();
+      const good = lower.includes("pressure") || lower.includes("awkward") || lower.includes("fear") || lower.includes("embarrass") || lower.includes("judge") || lower.includes("reject") || lower.includes("social") || lower.includes("expect") || lower.includes("guilt") || lower.includes("shy");
+      return good
+        ? "That's right — peer pressure is one of the biggest reasons. 🎯 Fear of being judged, making things awkward, or hurting someone's feelings can make saying no feel almost impossible. But remember: your discomfort is always more important than someone else's convenience. You have <strong>passed the Boss Fight!</strong> 🏆"
+        : "Good thinking! People often struggle because of peer pressure, fear of judgment, or not wanting to seem rude. These social forces are powerful — but your boundaries always come first. You have <strong>passed the Boss Fight!</strong> 🏆";
+    },
+    last: true
+  }
+];
+
+let bossStage = 0;
+let waitingForUser = false;
+
+function initBoss(){
+  document.getElementById("chatLog").innerHTML = "";
+  bossStage = 0;
+  waitingForUser = false;
+  document.getElementById("nextRow").style.display = "none";
+  document.getElementById("inputArea").style.display = "flex";
+  updateStageLabel();
+  setTimeout(()=> gmSay(conversation[0].gmQ, true), 400);
+}
+
+function updateStageLabel(){
+  document.getElementById("stageLabel").textContent = `Round ${bossStage+1} / ${conversation.length}`;
+}
+
+function gmSay(text, enableAfter=false){
+  const log = document.getElementById("chatLog");
+  const typing = document.createElement("div");
+  typing.className = "msg gm"; typing.id = "typing";
+  typing.innerHTML = `<div class="msg-avatar">🧙</div><div class="msg-bubble typing-indicator"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
+  log.appendChild(typing); log.scrollTop = log.scrollHeight;
+
+  setTimeout(()=>{
+    typing.remove();
+    const msg = document.createElement("div");
+    msg.className = "msg gm";
+    msg.innerHTML = `<div class="msg-avatar">🧙</div><div class="msg-bubble">${text}</div>`;
+    log.appendChild(msg); log.scrollTop = log.scrollHeight;
+    if(enableAfter) enableInput();
+  }, 1200);
+}
+
+function enableInput(){
+  waitingForUser = true;
+  document.getElementById("sendBtn").disabled = false;
+  document.getElementById("chatInput").disabled = false;
+  document.getElementById("chatInput").focus();
+}
+
+function disableInput(){
+  waitingForUser = false;
+  document.getElementById("sendBtn").disabled = true;
+  document.getElementById("chatInput").disabled = true;
+}
+
+function sendUserMsg(){
+  if(!waitingForUser) return;
+  const ta = document.getElementById("chatInput");
+  const text = ta.value.trim();
+  if(text.length < 5){ ta.style.borderColor="#f87171"; setTimeout(()=>ta.style.borderColor="",800); return; }
+  ta.value = ""; ta.style.height="auto";
+  disableInput();
+
+  const log = document.getElementById("chatLog");
+  const msg = document.createElement("div");
+  msg.className = "msg user";
+  msg.innerHTML = `<div class="msg-avatar">🧑</div><div class="msg-bubble">${escHtml(text)}</div>`;
+  log.appendChild(msg); log.scrollTop = log.scrollHeight;
+
+  const stage = conversation[bossStage];
+  const reply = stage.gmReply(text);
+  const isLast = !!stage.last;
+
+  setTimeout(()=>{
+    gmSay(reply, !isLast);
+    if(isLast){
+      setTimeout(()=>{
+        document.getElementById("inputArea").style.display = "none";
+        document.getElementById("nextRow").style.display = "block";
+      }, 1800);
+    } else {
+      bossStage++;
+      updateStageLabel();
+      setTimeout(()=>{ gmSay(conversation[bossStage].gmQ, true); }, 2200);
+    }
+  }, 600);
+}
+
+function handleKey(e){ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendUserMsg(); } }
+function autoResize(el){ el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,120)+"px"; }
+function escHtml(t){ const d=document.createElement("div"); d.textContent=t; return d.innerHTML; }
+function goToEnd(){ switchScreen("end"); }
+
+function switchScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+</script>
+</body>
+</html>
