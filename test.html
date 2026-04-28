@@ -4,599 +4,1184 @@
 <meta charset="UTF-8">
 <title>AdultingQuest RPG</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Nunito:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: #0a0a1a;
-    color: #e8e0ff;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+:root {
+  --purple: #7c3aed;
+  --purple-light: #a78bfa;
+  --blue: #3b82f6;
+  --pink: #ec4899;
+  --pink-light: #f472b6;
+  --gold: #f59e0b;
+  --green: #10b981;
+  --bg: #04040e;
+  --surface: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.09);
+  --text: #e8e0ff;
+  --muted: #6b7280;
+}
 
-  .bg {
-    position: fixed; inset: 0;
-    background: radial-gradient(ellipse at 20% 50%, #1a0533 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 20%, #0d1a3a 0%, transparent 60%),
-                #060612;
-    z-index: 0;
-  }
+html { scroll-behavior: smooth; }
 
-  .stars {
-    position: fixed; inset: 0; z-index: 0;
-    background-image:
-      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
-      radial-gradient(1px 1px at 60% 10%, rgba(255,255,255,0.4) 0%, transparent 100%),
-      radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,0.5) 0%, transparent 100%),
-      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 10% 70%, rgba(255,255,255,0.5) 0%, transparent 100%);
-  }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
 
-  .screen { display: none; position: relative; z-index: 1; width: 100%; height: 100vh; align-items: center; justify-content: center; flex-direction: column; }
-  .screen.active { display: flex; }
+/* ─── GLOBAL BG ─────────────────────────────── */
+.bg-layer {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 40%, rgba(124,58,237,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 85% 15%, rgba(59,130,246,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 50% 90%, rgba(236,72,153,0.08) 0%, transparent 70%),
+    #04040e;
+}
+.noise {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
 
-  /* HOME */
-  #home h1 {
-    font-family: 'Cinzel', serif;
-    font-size: 3rem;
-    background: linear-gradient(135deg, #a78bfa, #60a5fa, #f472b6);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 0.5rem;
-    text-align: center;
-  }
-  #home p { color: #9ca3af; margin-bottom: 2rem; text-align: center; }
+/* ─── SCREENS ────────────────────────────────── */
+.screen { display: none; position: relative; z-index: 1; }
+.screen:not(.active) { display: none !important; }
+#landing.active    { display: block;        min-height: 100vh; overflow-y: auto; }
+#genderSelect.active { display: flex; height: 100vh; flex-direction: column; align-items: center; justify-content: center; }
+#story.active      { display: block;        height: 100vh; overflow: hidden; }
+#mcq.active        { display: flex; height: 100vh; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
+#boss.active       { display: flex; height: 100vh; align-items: center; justify-content: center; padding: 16px; }
+#end.active        { display: flex; height: 100vh; align-items: center; justify-content: center; padding: 16px; }
 
-  .btn {
-    padding: 12px 28px; border-radius: 12px; border: none;
-    background: linear-gradient(135deg, #7c3aed, #4f46e5);
-    color: white; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700;
-    cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 4px 20px rgba(124,58,237,0.4);
-  }
-  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(124,58,237,0.6); }
-  .btn:active { transform: translateY(0); }
+/* ─── LANDING ────────────────────────────────── */
+.land-nav {
+  display: flex; align-items: center;
+  padding: 20px 40px 20px 32px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: rgba(4,4,14,0.85);
+  backdrop-filter: blur(20px);
+  z-index: 10;
+}
+.land-logo {
+  font-family: 'Cinzel', serif; font-size: 1.15rem; font-weight: 700;
+  background: linear-gradient(120deg, var(--purple-light), var(--blue), var(--pink-light));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: 0.03em;
+}
+.land-xp-pill {
+  margin-left: auto; display: flex; align-items: center; gap: 6px;
+  font-size: 0.8rem; font-weight: 600; color: var(--gold);
+  background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);
+  padding: 5px 14px; border-radius: 999px;
+}
 
-  /* STORY */
-  #story { padding: 0; position: relative; }
-  #postStory { padding: 0; position: relative; }
+.land-hero {
+  text-align: center; padding: 64px 20px 48px;
+  max-width: 640px; margin: 0 auto;
+}
+.land-hero h1 {
+  font-family: 'Cinzel', serif; font-weight: 700;
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  background: linear-gradient(135deg, #c4b5fd 0%, #93c5fd 50%, #f9a8d4 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  line-height: 1.1; margin-bottom: 16px;
+}
+.land-hero p {
+  font-size: 1rem; color: #9ca3af; line-height: 1.7; max-width: 420px; margin: 0 auto 28px;
+}
+.land-tagline {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--purple-light); background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2);
+  padding: 6px 14px; border-radius: 999px;
+  margin-bottom: 28px;
+}
 
-  .scene-container {
-    position: fixed; inset: 0;
-    background: #000;
-    z-index: 0;
-  }
+.section-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--muted); padding: 0 32px; margin-bottom: 20px;
+}
 
-  .scene-container video {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-    opacity: 0;
-    transition: opacity 0.6s ease;
-  }
-  .scene-container video.visible { opacity: 1; }
+.chapter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 960px; margin: 0 auto; padding: 0 24px 80px;
+}
 
-  .scene-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 40%, rgba(0,0,0,0.75) 100%);
-    pointer-events: none;
-    z-index: 1;
-  }
+.ch-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 26px 24px 22px;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s;
+}
+.ch-card::after {
+  content: ''; position: absolute; inset: 0; border-radius: 20px;
+  background: linear-gradient(135deg, var(--c1, #7c3aed), var(--c2, #4f46e5));
+  opacity: 0; transition: opacity 0.3s;
+}
+.ch-card:hover { transform: translateY(-5px); border-color: var(--c1, #7c3aed); box-shadow: 0 12px 40px color-mix(in srgb, var(--c1, #7c3aed) 30%, transparent); }
+.ch-card:hover::after { opacity: 0.07; }
+.ch-card.locked { opacity: 0.38; cursor: not-allowed; }
+.ch-card.locked:hover { transform: none; border-color: var(--border); box-shadow: none; }
+.ch-card.locked:hover::after { opacity: 0; }
+.ch-card > * { position: relative; z-index: 1; }
 
-  .story-box {
-    position: absolute;
-    bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(700px, 92vw);
-    background: rgba(6,6,18,0.82);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px;
-    padding: 24px 28px 20px;
-    backdrop-filter: blur(16px);
-    z-index: 2;
-  }
-  .story-speaker {
-    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
-    color: #a78bfa; text-transform: uppercase; margin-bottom: 8px;
-  }
-  .story-text {
-    font-size: 1.05rem; line-height: 1.7; color: #e8e0ff; min-height: 56px;
-  }
-  .story-btn-row { margin-top: 18px; text-align: right; }
+.ch-num {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--c1, var(--purple-light));
+  background: color-mix(in srgb, var(--c1, #7c3aed) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c1, #7c3aed) 25%, transparent);
+  padding: 3px 10px; border-radius: 999px; margin-bottom: 14px;
+}
+.ch-icon { font-size: 2.2rem; margin-bottom: 10px; line-height: 1; }
+.ch-title { font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 700; color: #f0ecff; margin-bottom: 8px; }
+.ch-desc { font-size: 0.84rem; color: #9ca3af; line-height: 1.65; margin-bottom: 20px; }
 
-  /* MCQ */
-  #mcq { padding: 20px; }
-  .mcq-box {
-    width: min(680px, 95vw);
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px; padding: 28px;
-    backdrop-filter: blur(12px);
-  }
-  .mcq-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #f472b6; text-transform: uppercase; margin-bottom: 12px; }
-  .mcq-q { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
-  .mcq-choices { display: flex; flex-direction: column; gap: 10px; }
-  .choice-btn {
-    padding: 12px 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.06); color: #e8e0ff;
-    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 600;
-    cursor: pointer; text-align: left; transition: background 0.2s, border-color 0.2s;
-  }
-  .choice-btn:hover { background: rgba(124,58,237,0.25); border-color: #7c3aed; }
-  .choice-btn.selected { background: rgba(124,58,237,0.35); border-color: #a78bfa; }
-  .mcq-feedback { margin-top: 14px; font-size: 0.9rem; color: #86efac; min-height: 20px; }
-  .mcq-continue { margin-top: 16px; display: none; }
+.ch-footer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ch-xp {
+  font-size: 0.75rem; font-weight: 700; color: var(--gold);
+  background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);
+  padding: 3px 10px; border-radius: 999px;
+}
+.ch-diff { font-size: 0.8rem; color: #f59e0b; letter-spacing: 2px; }
+.ch-play {
+  margin-left: auto; padding: 7px 16px;
+  background: linear-gradient(135deg, var(--c1, #7c3aed), var(--c2, #4f46e5));
+  border: none; border-radius: 10px; color: #fff;
+  font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; pointer-events: none;
+  transition: transform 0.15s; white-space: nowrap;
+}
+.ch-card:hover .ch-play { transform: scale(1.04); }
 
-  /* POST-MCQ STORY */
-  #postStory { padding: 20px; flex-direction: column; }
+/* ─── GENDER SELECT ─────────────────────────── */
+#genderSelect {
+  background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(124,58,237,0.15) 0%, transparent 70%);
+}
+.gs-back {
+  position: absolute; top: 22px; left: 28px;
+  background: none; border: 1px solid var(--border); border-radius: 10px;
+  color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 500; padding: 7px 16px;
+  display: flex; align-items: center; gap: 6px; transition: color 0.2s, border-color 0.2s;
+}
+.gs-back:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
 
-  /* BOSS CHAT */
-  #boss { padding: 20px; }
-  .boss-wrapper { width: min(720px, 95vw); display: flex; flex-direction: column; height: 85vh; }
+.gs-chapter-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--purple-light); background: rgba(124,58,237,0.12);
+  border: 1px solid rgba(124,58,237,0.25); padding: 4px 14px;
+  border-radius: 999px; margin-bottom: 16px;
+}
+.gs-header { text-align: center; margin-bottom: 44px; }
+.gs-header h2 {
+  font-family: 'Cinzel', serif; font-size: 1.9rem; font-weight: 700;
+  background: linear-gradient(120deg, #c4b5fd, #93c5fd);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+}
+.gs-header p { color: var(--muted); font-size: 0.93rem; }
 
-  .boss-header {
-    display: flex; align-items: center; gap: 12px;
-    padding: 16px 20px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 16px 16px 0 0;
-    backdrop-filter: blur(12px);
-  }
-  .boss-avatar {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: linear-gradient(135deg, #7c3aed, #f472b6);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.3rem; flex-shrink: 0;
-    box-shadow: 0 0 16px rgba(124,58,237,0.6);
-  }
-  .boss-name { font-family: 'Cinzel', serif; font-size: 1rem; color: #a78bfa; }
-  .boss-status { font-size: 0.75rem; color: #6ee7b7; }
-  .boss-stage-indicator {
-    margin-left: auto; font-size: 0.75rem; color: #9ca3af;
-    background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px;
-  }
+.gs-cards { display: flex; gap: 20px; }
+.gs-card {
+  width: 185px; padding: 36px 20px 28px; text-align: center;
+  background: var(--surface); border: 2px solid var(--border); border-radius: 20px;
+  cursor: pointer; transition: all 0.22s;
+  position: relative; overflow: hidden;
+}
+.gs-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(59,130,246,0.1));
+  opacity: 0; transition: opacity 0.3s;
+}
+.gs-card:hover { border-color: var(--purple-light); transform: translateY(-6px); box-shadow: 0 16px 40px rgba(124,58,237,0.3); }
+.gs-card:hover::before { opacity: 1; }
+.gs-card > * { position: relative; z-index: 1; }
+.gs-emoji { font-size: 3.8rem; margin-bottom: 14px; line-height: 1; display: block; }
+.gs-name { font-family: 'Cinzel', serif; font-size: 1rem; color: #e8e0ff; margin-bottom: 6px; }
+.gs-sub { font-size: 0.78rem; color: var(--muted); }
 
-  .chat-log {
-    flex: 1; overflow-y: auto; padding: 20px;
-    background: rgba(0,0,0,0.3);
-    border-left: 1px solid rgba(255,255,255,0.06);
-    border-right: 1px solid rgba(255,255,255,0.06);
-    display: flex; flex-direction: column; gap: 16px;
-    scroll-behavior: smooth;
-  }
-  .chat-log::-webkit-scrollbar { width: 4px; }
-  .chat-log::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.4); border-radius: 4px; }
+.gs-note {
+  margin-top: 28px; font-size: 0.79rem; color: #374151; text-align: center;
+  max-width: 320px;
+}
 
-  .msg { display: flex; gap: 10px; max-width: 85%; animation: fadeUp 0.3s ease; }
-  .msg.gm { align-self: flex-start; }
-  .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+/* ─── STORY ──────────────────────────────────── */
+.scene-wrap { position: fixed; inset: 0; background: #000; z-index: 0; }
+.scene-wrap video {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  opacity: 0; transition: opacity 0.7s;
+}
+.scene-wrap video.vis { opacity: 1; }
+.scene-wrap .scene-cover {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 35%, rgba(0,0,0,0.82) 100%);
+}
 
-  @keyframes fadeUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+.story-hud {
+  position: absolute; top: 24px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px; z-index: 2;
+}
+.story-chapter-pill {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.6); background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 999px;
+  backdrop-filter: blur(10px);
+}
 
-  .msg-avatar {
-    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
-  }
-  .msg.gm .msg-avatar { background: linear-gradient(135deg, #7c3aed, #f472b6); box-shadow: 0 0 10px rgba(124,58,237,0.4); }
-  .msg.user .msg-avatar { background: linear-gradient(135deg, #0ea5e9, #6ee7b7); }
+.dlg-box {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  width: min(720px, 92vw);
+  background: rgba(4,4,14,0.88);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px; padding: 22px 26px 18px;
+  backdrop-filter: blur(20px); z-index: 2;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+.dlg-speaker {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em;
+  color: var(--purple-light); text-transform: uppercase; margin-bottom: 8px;
+}
+.dlg-text {
+  font-size: 1rem; line-height: 1.75; color: #ede9fe; min-height: 50px;
+}
+.dlg-row { margin-top: 16px; display: flex; justify-content: flex-end; }
 
-  .msg-bubble { padding: 12px 16px; border-radius: 14px; font-size: 0.93rem; line-height: 1.6; }
-  .msg.gm .msg-bubble {
-    background: rgba(124,58,237,0.18);
-    border: 1px solid rgba(124,58,237,0.3);
-    border-top-left-radius: 4px; color: #e8e0ff;
-  }
-  .msg.user .msg-bubble {
-    background: rgba(14,165,233,0.18);
-    border: 1px solid rgba(14,165,233,0.3);
-    border-top-right-radius: 4px; color: #e0f2fe;
-  }
+/* ─── SHARED BTN ─────────────────────────────── */
+.btn {
+  padding: 11px 26px; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, var(--purple), #4f46e5);
+  color: #fff; font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 18px rgba(124,58,237,0.4);
+  line-height: 1;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 7px 24px rgba(124,58,237,0.55); }
+.btn:active { transform: translateY(0); }
+.btn-ghost {
+  background: rgba(255,255,255,0.08); box-shadow: none; border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.14); box-shadow: none; }
 
-  .typing-indicator { display: flex; gap: 4px; align-items: center; padding: 14px 16px; }
-  .typing-dot { width: 7px; height: 7px; border-radius: 50%; background: #a78bfa; animation: bounce 1.2s infinite; }
-  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes bounce { 0%,60%,100%{transform:translateY(0);} 30%{transform:translateY(-6px);} }
+/* ─── MCQ ────────────────────────────────────── */
+.mcq-wrap {
+  width: min(680px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 22px; padding: 30px 28px 26px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+  max-height: 92vh; overflow-y: auto;
+}
+.mcq-label {
+  font-size: 0.71rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--pink-light); margin-bottom: 14px;
+}
+.mcq-q { font-size: 1.1rem; font-weight: 700; line-height: 1.5; margin-bottom: 22px; color: #f0ecff; }
+.mcq-choices { display: flex; flex-direction: column; gap: 10px; }
 
-  .chat-input-area {
-    padding: 16px 20px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-top: none;
-    border-radius: 0 0 16px 16px;
-    backdrop-filter: blur(12px);
-    display: flex; gap: 10px; align-items: flex-end;
-  }
-  .chat-input-area textarea {
-    flex: 1; background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 12px; padding: 12px 14px;
-    color: #e8e0ff; font-family: 'Nunito', sans-serif; font-size: 0.93rem;
-    resize: none; outline: none; min-height: 44px; max-height: 120px;
-    line-height: 1.5; transition: border-color 0.2s;
-  }
-  .chat-input-area textarea:focus { border-color: #7c3aed; }
-  .chat-input-area textarea::placeholder { color: #6b7280; }
-  .send-btn {
-    width: 44px; height: 44px; border-radius: 12px; border: none;
-    background: linear-gradient(135deg, #7c3aed, #4f46e5);
-    color: white; font-size: 1.1rem; cursor: pointer;
-    flex-shrink: 0; transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 4px 14px rgba(124,58,237,0.4);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .send-btn:hover { transform: scale(1.08); }
-  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.choice-btn {
+  padding: 13px 18px; border-radius: 13px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05); color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 0.93rem; font-weight: 500;
+  cursor: pointer; text-align: left; transition: background 0.2s, border-color 0.2s;
+  line-height: 1.5;
+}
+.choice-btn:hover { background: rgba(124,58,237,0.2); border-color: rgba(124,58,237,0.5); }
+.choice-btn.selected { background: rgba(124,58,237,0.28); border-color: var(--purple-light); color: #fff; font-weight: 600; }
+.choice-btn.off { pointer-events: none; opacity: 0.45; }
 
-  .next-row { margin-top: 12px; text-align: center; }
+.mcq-fb {
+  margin-top: 16px; font-size: 0.88rem; color: #86efac;
+  line-height: 1.6; min-height: 18px;
+  padding: 0 2px;
+}
+.mcq-fb.warn { color: #fbbf24; }
+.mcq-continue { margin-top: 18px; display: none; }
 
-  /* END */
-  #end .end-box {
-    text-align: center; padding: 40px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 24px; backdrop-filter: blur(12px);
-    width: min(480px, 90vw);
-  }
-  .trophy { font-size: 4rem; margin-bottom: 16px; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
-  #end h2 { font-family: 'Cinzel', serif; font-size: 1.8rem; color: #fbbf24; margin-bottom: 12px; }
-  #end p { color: #9ca3af; line-height: 1.7; margin-bottom: 24px; }
+
+#mcq {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+/* ─── BOSS CHAT ──────────────────────────────── */
+.boss-wrap {
+  width: min(720px, 100%); height: min(88vh, 680px);
+  display: flex; flex-direction: column;
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 16px 60px rgba(0,0,0,0.6);
+}
+.boss-hdr {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  backdrop-filter: blur(16px);
+  flex-shrink: 0;
+}
+.boss-av {
+  width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--purple), var(--pink));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; box-shadow: 0 0 18px rgba(124,58,237,0.5);
+}
+.boss-name { font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--purple-light); font-weight: 700; }
+.boss-online { font-size: 0.73rem; color: var(--green); margin-top: 2px; }
+.boss-rnd {
+  margin-left: auto; font-size: 0.73rem; color: var(--muted);
+  background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 999px;
+  white-space: nowrap;
+}
+
+.chat-log {
+  flex: 1; overflow-y: auto; padding: 20px 18px;
+  background: rgba(0,0,0,0.28);
+  border: 1px solid var(--border); border-top: none; border-bottom: none;
+  display: flex; flex-direction: column; gap: 14px;
+  scroll-behavior: smooth;
+}
+.chat-log::-webkit-scrollbar { width: 3px; }
+.chat-log::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.35); border-radius: 3px; }
+
+.msg { display: flex; gap: 9px; max-width: 82%; animation: pop .28s ease; }
+.msg.gm { align-self: flex-start; }
+.msg.usr { align-self: flex-end; flex-direction: row-reverse; }
+@keyframes pop { from { opacity:0; transform: translateY(8px) scale(0.97); } to { opacity:1; transform: translateY(0) scale(1); } }
+
+.msg-av {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+}
+.msg.gm .msg-av { background: linear-gradient(135deg, var(--purple), var(--pink)); box-shadow: 0 0 10px rgba(124,58,237,0.4); }
+.msg.usr .msg-av { background: linear-gradient(135deg, #0ea5e9, #06b6d4); }
+
+.msg-bbl { padding: 11px 14px; border-radius: 14px; font-size: 0.9rem; line-height: 1.65; }
+.msg.gm .msg-bbl {
+  background: rgba(124,58,237,0.16); border: 1px solid rgba(124,58,237,0.28);
+  border-top-left-radius: 4px; color: var(--text);
+}
+.msg.usr .msg-bbl {
+  background: rgba(14,165,233,0.16); border: 1px solid rgba(14,165,233,0.28);
+  border-top-right-radius: 4px; color: #e0f2fe;
+}
+
+.typing-wrap { display: flex; gap: 4px; align-items: center; padding: 12px 14px; }
+.tdot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--purple-light);
+  animation: tdot 1.2s infinite;
+}
+.tdot:nth-child(2) { animation-delay: .2s; }
+.tdot:nth-child(3) { animation-delay: .4s; }
+@keyframes tdot { 0%,60%,100%{ transform:translateY(0); } 30%{ transform:translateY(-6px); } }
+
+.chat-in {
+  padding: 14px 18px; display: flex; gap: 10px; align-items: flex-end;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border); border-top: none;
+  border-radius: 0 0 20px 20px;
+  backdrop-filter: blur(16px); flex-shrink: 0;
+}
+.chat-in textarea {
+  flex: 1; background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 11px 14px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+  resize: none; outline: none; min-height: 42px; max-height: 110px;
+  line-height: 1.55; transition: border-color 0.2s;
+}
+.chat-in textarea:focus { border-color: var(--purple); }
+.chat-in textarea::placeholder { color: #4b5563; }
+.send-btn {
+  width: 42px; height: 42px; border-radius: 11px; border: none;
+  background: linear-gradient(135deg, var(--purple), #4f46e5);
+  color: #fff; font-size: 1rem; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.15s; box-shadow: 0 4px 14px rgba(124,58,237,0.4);
+}
+.send-btn:hover { transform: scale(1.08); }
+.send-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+.next-row { padding: 12px 18px; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-top: none; border-radius: 0 0 20px 20px; flex-shrink: 0; }
+
+/* ─── END ────────────────────────────────────── */
+.end-box {
+  text-align: center; padding: 52px 44px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 24px; backdrop-filter: blur(16px);
+  width: min(480px, 95vw);
+  box-shadow: 0 16px 60px rgba(0,0,0,0.5);
+}
+.end-trophy { font-size: 4.5rem; margin-bottom: 18px; animation: glow 2s ease-in-out infinite; }
+@keyframes glow { 0%,100%{ transform: scale(1); filter: drop-shadow(0 0 0 rgba(245,158,11,0)); } 50%{ transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(245,158,11,0.6)); } }
+.end-box h2 { font-family: 'Cinzel', serif; font-size: 1.75rem; font-weight: 700; color: var(--gold); margin-bottom: 12px; }
+.end-box p { color: #9ca3af; line-height: 1.75; margin-bottom: 28px; font-size: 0.93rem; }
+.end-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* ─── SCROLLBAR ──────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.3); border-radius: 5px; }
 </style>
 </head>
 <body>
 
-<div class="bg"></div>
-<div class="stars"></div>
+<div class="bg-layer"></div>
+<div class="noise"></div>
 
-<!-- HOME -->
-<div id="home" class="screen active">
-  <h1>🎮 AdultingQuest</h1>
-  <p>Consent & Boundaries Module</p>
-  <button class="btn" onclick="startStory()">Start Module</button>
+<!-- ═══════════ LANDING ═══════════ -->
+<div id="landing" class="screen active">
+  <nav class="land-nav">
+    <div class="land-logo">🎮 AdultingQuest</div>
+    <div class="land-xp-pill">⚡ Level Up Your Life Skills</div>
+  </nav>
+
+  <div class="land-hero">
+    <div class="land-tagline">🎓 Sex Ed • Gamified</div>
+    <h1>AdultingQuest</h1>
+    <p>Navigate real-world scenarios about consent, health, and relationships — and level up your life skills.</p>
+  </div>
+
+  <div class="section-label">📚 Chapters</div>
+
+  <div class="chapter-grid">
+
+    <!-- CH 1 -->
+    <div class="ch-card" style="--c1:#7c3aed;--c2:#4f46e5;" onclick="selectChapter('ch1')">
+      <div class="ch-num">Chapter 1</div>
+      <div class="ch-icon">🤝</div>
+      <div class="ch-title">Consent</div>
+      <div class="ch-desc">Navigate real situations where boundaries are tested. Learn to recognise, give, and respect consent — from both perspectives.</div>
+      <div class="ch-footer">
+        <div class="ch-xp">+150 XP</div>
+        <div class="ch-diff">★★☆</div>
+        <button class="ch-play">Play →</button>
+      </div>
+    </div>
+
+    <!-- CH 2 -->
+    <div class="ch-card" style="--c1:#db2777;--c2:#9333ea;" onclick="selectChapter('ch2')">
+      <div class="ch-num" style="color:#f472b6;">Chapter 2</div>
+      <div class="ch-icon">🌸</div>
+      <div class="ch-title">Pregnancy Awareness</div>
+      <div class="ch-desc">Bust myths, face tough choices, and understand how to make responsible decisions about sexual health and contraception.</div>
+      <div class="ch-footer">
+        <div class="ch-xp" style="color:#f472b6;background:rgba(244,114,182,0.1);border-color:rgba(244,114,182,0.25);">+200 XP</div>
+        <div class="ch-diff">★★★</div>
+        <button class="ch-play" style="background:linear-gradient(135deg,#db2777,#9333ea)">Play →</button>
+      </div>
+    </div>
+
+    <!-- CH 3 LOCKED -->
+    <div class="ch-card locked" style="--c1:#6b7280;--c2:#4b5563;">
+      <div class="ch-num" style="color:#6b7280;background:rgba(107,114,128,0.1);border-color:rgba(107,114,128,0.2);">Chapter 3</div>
+      <div class="ch-icon">🔒</div>
+      <div class="ch-title">STIs & Protection</div>
+      <div class="ch-desc">Coming soon. Learn the facts about sexually transmitted infections and how to protect yourself and your partner.</div>
+      <div class="ch-footer">
+        <div class="ch-xp" style="color:#6b7280;background:rgba(107,114,128,0.1);border-color:rgba(107,114,128,0.2);">+250 XP</div>
+        <div class="ch-diff" style="color:#6b7280;">★★★</div>
+        <div style="margin-left:auto;font-size:1rem;">🔒</div>
+      </div>
+    </div>
+
+    <!-- CH 4 LOCKED -->
+    <div class="ch-card locked" style="--c1:#6b7280;--c2:#4b5563;">
+      <div class="ch-num" style="color:#6b7280;background:rgba(107,114,128,0.1);border-color:rgba(107,114,128,0.2);">Chapter 4</div>
+      <div class="ch-icon">🔒</div>
+      <div class="ch-title">Healthy Relationships</div>
+      <div class="ch-desc">Coming soon. Explore what healthy and unhealthy relationship dynamics look like — and how to tell the difference.</div>
+      <div class="ch-footer">
+        <div class="ch-xp" style="color:#6b7280;background:rgba(107,114,128,0.1);border-color:rgba(107,114,128,0.2);">+200 XP</div>
+        <div class="ch-diff" style="color:#6b7280;">★★☆</div>
+        <div style="margin-left:auto;font-size:1rem;">🔒</div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<!-- STORY (intro scenes) -->
+<!-- ═══════════ GENDER SELECT ═══════════ -->
+<div id="genderSelect" class="screen">
+  <button class="gs-back" onclick="switchScreen('landing')">← Back</button>
+
+  <div class="gs-header">
+    <div class="gs-chapter-pill" id="gsPill">📖 Chapter 1 · Consent</div>
+    <h2>Choose Your Perspective</h2>
+    <p>Same world — different lens. Both paths teach the same core lesson.</p>
+  </div>
+
+  <div class="gs-cards">
+    <div class="gs-card" onclick="beginChapter('male')">
+      <span class="gs-emoji">👦</span>
+      <div class="gs-name">Male</div>
+      <div class="gs-sub">Play as a guy</div>
+    </div>
+    <div class="gs-card" onclick="beginChapter('female')">
+      <span class="gs-emoji">👧</span>
+      <div class="gs-name">Female</div>
+      <div class="gs-sub">Play as a girl</div>
+    </div>
+  </div>
+
+  <div class="gs-note">Both perspectives explore the same core lessons about safety and respect.</div>
+</div>
+
+<!-- ═══════════ STORY ═══════════ -->
 <div id="story" class="screen">
-  <div class="scene-container">
-    <video id="mainVideo" autoplay muted playsinline loop></video>
-    <div class="scene-overlay"></div>
+  <div class="scene-wrap">
+    <video id="mainVid" autoplay muted playsinline loop></video>
+    <div class="scene-cover"></div>
   </div>
-  <div class="story-box">
-    <div class="story-speaker" id="speaker"></div>
-    <div class="story-text" id="dialogue"></div>
-    <div class="story-btn-row">
-      <button class="btn" id="storyBtn" onclick="advanceStory()">Continue →</button>
+
+  <div class="story-hud">
+    <div class="story-chapter-pill" id="storyPill">Chapter 1 · Consent</div>
+  </div>
+
+  <div class="dlg-box">
+    <div class="dlg-speaker" id="dlgSpeaker"></div>
+    <div class="dlg-text" id="dlgText"></div>
+    <div class="dlg-row">
+      <button class="btn" id="storyBtn" onclick="advanceScene()">Continue →</button>
     </div>
   </div>
 </div>
 
-<!-- MCQ -->
+<!-- ═══════════ MCQ ═══════════ -->
 <div id="mcq" class="screen">
-  <div class="mcq-box">
-    <div class="mcq-label">⚔️ Decision Point</div>
-    <div class="mcq-q">What should you do in this situation?</div>
-    <div class="mcq-choices">
-      <button class="choice-btn" onclick="mcq(this,1)">😬 Go along to avoid awkwardness</button>
-      <button class="choice-btn" onclick="mcq(this,2)">✋ Clearly say NO and leave</button>
-      <button class="choice-btn" onclick="mcq(this,3)">😶 Stay quiet and avoid responding</button>
-    </div>
-    <div class="mcq-feedback" id="mcqFb"></div>
-    <div class="mcq-continue" id="mcqContinue">
-      <button class="btn" onclick="startPostStory()">Continue Story →</button>
+  <div class="mcq-wrap">
+    <div class="mcq-label" id="mcqLabel">⚔️ Decision Point</div>
+    <div class="mcq-q" id="mcqQ"></div>
+    <div class="mcq-choices" id="mcqChoices"></div>
+    <div class="mcq-fb" id="mcqFb"></div>
+    <div class="mcq-continue" id="mcqCont">
+      <button class="btn" onclick="mcqContinue()">Continue →</button>
     </div>
   </div>
 </div>
 
-<!-- POST-MCQ STORY (path-specific scenes) -->
-<div id="postStory" class="screen">
-  <div class="scene-container">
-    <video id="postVideo" autoplay muted playsinline loop></video>
-    <div class="scene-overlay"></div>
-  </div>
-  <div class="story-box">
-    <div class="story-speaker" id="postSpeaker"></div>
-    <div class="story-text" id="postDialogue"></div>
-    <div class="story-btn-row">
-      <button class="btn" id="postStoryBtn" onclick="advancePostStory()">Continue →</button>
-    </div>
-  </div>
-</div>
-
-<!-- BOSS CHAT -->
+<!-- ═══════════ BOSS ═══════════ -->
 <div id="boss" class="screen">
-  <div class="boss-wrapper">
-    <div class="boss-header">
-      <div class="boss-avatar">🧙</div>
+  <div class="boss-wrap">
+    <div class="boss-hdr">
+      <div class="boss-av">🧙</div>
       <div>
         <div class="boss-name">Game Master</div>
-        <div class="boss-status">● Online</div>
+        <div class="boss-online">● Final Challenge</div>
       </div>
-      <div class="boss-stage-indicator" id="stageLabel">Round 1 / 2</div>
+      <div class="boss-rnd" id="bossRnd">Round 1 / 2</div>
     </div>
+
     <div class="chat-log" id="chatLog"></div>
-    <div class="chat-input-area" id="inputArea">
-      <textarea id="chatInput" placeholder="Type your answer..." rows="1"
+
+    <div class="chat-in" id="chatIn">
+      <textarea id="chatInput" placeholder="Type your answer here..." rows="1"
         onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-      <button class="send-btn" id="sendBtn" onclick="sendUserMsg()">➤</button>
+      <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
     </div>
+
     <div class="next-row" id="nextRow" style="display:none">
-      <button class="btn" onclick="goToEnd()">🏆 Complete Module</button>
+      <button class="btn" onclick="goEnd()">🏆 Complete Module</button>
     </div>
   </div>
 </div>
 
-<!-- END -->
+<!-- ═══════════ END ═══════════ -->
 <div id="end" class="screen">
   <div class="end-box">
-    <div class="trophy">🏆</div>
-    <h2>Boss Cleared!</h2>
-    <p>You've shown a strong understanding of consent and boundaries. Remember: real consent is clear, enthusiastic, and ongoing. You have the knowledge to protect yourself and support others.</p>
-    <button class="btn" onclick="location.reload()">Play Again</button>
+    <div class="end-trophy">🏆</div>
+    <h2>Module Complete!</h2>
+    <p>You've shown a strong understanding of the key lessons. Remember: what you learn here applies to real life — look out for yourself and for others.</p>
+    <div class="end-actions">
+      <button class="btn btn-ghost" onclick="switchScreen('landing')">Back to Chapters</button>
+      <button class="btn" onclick="location.reload()">Play Again</button>
+    </div>
   </div>
 </div>
 
 <script>
-/* ========== VIDEO HELPERS ========== */
-const VIDEOS = {
-  scene1: "scene1.mp4",
-  scene2: "scene2.mp4",
-  placeholder: "placeholder.mp4"
+/* ════════════════════════════════════════
+   DATA
+════════════════════════════════════════ */
+
+const VIDS = {
+  scene1: 'scene1.mp4',
+  scene2: 'scene2.mp4',
+  ch2scene1: 'Ch2scene1.mp4',
+  ch2MaleDecision: 'ch2maledecision.png',
+  ch2FemaleDecision: 'ch2femaledecision.png',
+  pregnancy: 'pregnancy.png',
+  Babes: 'Babes.png',
+  Protection:'protection.png',
+  Babescall: 'Babescall.png',
+  guycall: 'Guycall.png',
+  ph: ''
 };
 
-function setVideo(videoEl, key){
-  const src = VIDEOS[key] || "";
-  videoEl.src = src;
-  videoEl.classList.remove("visible");
-  if(src){
-    videoEl.load();
-    videoEl.play().then(()=> videoEl.classList.add("visible")).catch(()=>{});
-  }
-}
+const CHAPTERS = {
 
-/* ========== TYPEWRITER ========== */
-let typingTimer;
-function typeText(el, text, speed=22){
-  clearInterval(typingTimer); el.textContent=""; let i=0;
-  typingTimer = setInterval(()=>{
-    if(i < text.length){ el.textContent += text[i]; i++; }
-    else clearInterval(typingTimer);
-  }, speed);
-}
+  /* ─── CH1 FEMALE ─── */
+  ch1_female: {
+    label: 'Chapter 1 · Consent',
+    intro: [
+      { sp:'Game Master', tx:'After your CCA event, people stay behind to hang out. You\'ve been getting closer with someone from the group…', v:'scene1' },
+      { sp:'Guy',         tx:'Hey, you did great today. Want to chill for a bit?', v:'scene1' },
+      { sp:'You',         tx:'Yeah, just for a while.', v:'scene1' },
+      { sp:'Guy',         tx:'It\'s kinda loud here… want to go somewhere quieter?', v:'scene1' },
+      { sp:'Game Master', tx:'You arrive at a quieter, more isolated spot. The atmosphere shifts.', v:'scene2' },
+      { sp:'Guy',         tx:'Relax… it\'s just us.', v:'scene2' },
+      { sp:'You',         tx:'I don\'t really feel comfortable with this…', v:'scene2' },
+      { sp:'Guy',         tx:'Come on… don\'t make it weird. It\'s fine.', v:'scene2' },
+    ],
+    mcqs: [
+      {
+        label:'⚔️ Decision Point',
+        q:'What should you do in this situation?',
+        opts:[
+          { tx:'😬  Go along to avoid awkwardness',     pk:'risky',   fb:'⚠️ Going along when you\'re uncomfortable blurs boundaries and puts you at real risk.' },
+          { tx:'✋  Clearly say NO and leave',           pk:'safe',    fb:'✅ Strong choice. Setting a clear boundary protects you and sends an unmistakable message.' },
+          { tx:'😶  Stay quiet and avoid responding',   pk:'passive', fb:'⚠️ Silence can be misread as agreement. Consent must always be clear and active.' },
+        ]
+      }
+    ],
+    paths: {
+      mcq0_safe:[
+        { sp:'You',         tx:'No. I\'m not comfortable with this. I\'m leaving.', v:'scene2' },
+        { sp:'Game Master', tx:'Setting boundaries is a sign of strength — not weakness. You acted with real courage and protected yourself.', v:'ph' },
+      ],
+      mcq0_risky:[
+        { sp:'Game Master', tx:'You go along, even though something feels deeply off inside.', v:'scene2' },
+        { sp:'Game Master', tx:'What happened is not your fault. Support is always available — reach out to a trusted adult or helpline.', v:'ph' },
+      ],
+      mcq0_passive:[
+        { sp:'Game Master', tx:'You stay silent, hoping the situation resolves itself on its own.', v:'scene2' },
+        { sp:'Game Master', tx:'Silence can be misread as consent. Even a quiet "I\'m not okay with this" makes all the difference.', v:'ph' },
+      ],
+    },
+    flow:[
+      { type:'scenes', key:'intro' },
+      { type:'mcq', i:0 },
+      { type:'path', mi:0 },
+      { type:'boss' }
+    ]
+  },
 
-/* ========== INTRO SCENES ========== */
-// Each scene: { speaker, text, video:"scene1"|"scene2"|"placeholder", next }
-// next:"mcq" triggers MCQ screen
-const scenes = {
-  start:     { speaker:"Game Master", text:"After your CCA event, people stay behind to hang out. You've been getting closer with someone from the group…", video:"scene1", next:"talk1" },
-  talk1:     { speaker:"Guy",         text:"Hey, you did great today. Want to chill for a bit?", video:"scene1", next:"talk2" },
-  talk2:     { speaker:"You",         text:"Yeah, just for a while.", video:"scene1", next:"move" },
-  move:      { speaker:"Guy",         text:"It's kinda loud here… want to go somewhere quieter?", video:"scene1", next:"park" },
-  park:      { speaker:"Game Master", text:"You arrive at a quieter, more isolated spot. The atmosphere shifts.", video:"scene2", next:"pressure1" },
-  pressure1: { speaker:"Guy",         text:"Relax… it's just us.", video:"scene2", next:"pressure2" },
-  pressure2: { speaker:"You",         text:"I don't really feel comfortable with this…", video:"scene2", next:"pressure3" },
-  pressure3: { speaker:"Guy",         text:"Come on… don't make it weird. It's fine.", video:"scene2", next:"mcq" },
+  /* ─── CH1 MALE ─── */
+  ch1_male: {
+    label: 'Chapter 1 · Consent',
+    intro: [
+      { sp:'Game Master', tx:'After your CCA event, people stay behind. You and a girl from the group have been spending more time together lately...', v:'scene1' },
+      { sp:'You',         tx:'Hey, great job today! Want to go somewhere quieter? It\'s pretty loud here.', v:'scene1' },
+      { sp:'Her',         tx:'Okay... sure, I guess.', v:'scene1' },
+      { sp:'Game Master', tx:'You find a quiet spot, away from the rest of the group. You\'re both alone.', v:'scene2' },
+      { sp:'You',         tx:'Nice to finally have some time just the two of us, right?', v:'scene2' },
+      { sp:'Her',         tx:'I... I\'m actually not sure I feel comfortable here.', v:'scene2' },
+      { sp:'Game Master', tx:'She looks uneasy — avoiding eye contact, arms crossed. This is a critical moment.', v:'scene2' },
+    ],
+    mcqs: [
+      {
+        label:'⚔️ Decision Point',
+        q:'What do you do?',
+        opts:[
+          { tx:'💬  Try to convince her to stay',                               pk:'convince', fb:'⚠️ Pressuring someone who\'s uncomfortable — even with words — is a form of coercion.' },
+          { tx:'🛡️  Defend yourself — it\'s totally normal to hang out like this', pk:'defend',   fb:'⚠️ Dismissing her feelings invalidates them, even if your intentions were innocent.' },
+          { tx:'🚶  Let her do what she wants',                                  pk:'respect',  fb:'✅ Respecting her decision immediately, without question, is exactly right.' },
+        ]
+      }
+    ],
+    paths: {
+      mcq0_convince:[
+        { sp:'You',         tx:'Come on, it\'s just hanging out. What\'s the big deal? Nothing\'s going to happen, I promise.', v:'ph' },
+        { sp:'Her',         tx:'...Okay, fine. (She sits back down, but she looks tense and avoids your eyes.)', v:'ph' },
+        { sp:'Game Master', tx:'She stayed — but her body language tells a different story. Arms crossed. Eyes down. She is not comfortable.', v:'ph' },
+        { sp:'Game Master', tx:'You misread her compliance as comfort and lean closer. She freezes completely.', v:'ph' },
+        { sp:'Game Master', tx:'That night, she cries alone. Compliance under pressure is NOT consent. Real harm was done here.', v:'ph' },
+      ],
+      mcq0_defend:[
+        { sp:'You',         tx:'Guys and girls hang out alone all the time. You\'re seriously overthinking this. It\'s literally nothing.', v:'ph' },
+        { sp:'Her',         tx:'(flustered) I — whatever. Forget it. (She walks away quickly without looking back.)', v:'ph' },
+        { sp:'Game Master', tx:'The next day at school, her friends are giving you cold looks. Word has spread fast.', v:'ph' },
+        { sp:'Game Master', tx:'Dismissing her discomfort — even unintentionally — made her feel unsafe and unheard. That always has consequences.', v:'ph' },
+      ],
+      mcq0_respect:[
+        { sp:'You',         tx:'Of course — no pressure at all. We can catch up another time, yeah?', v:'ph' },
+        { sp:'Her',         tx:'(visibly relieved, smiling warmly) Thanks. That really means a lot. You\'re a good person.', v:'ph' },
+        { sp:'Game Master', tx:'She waves goodbye with a smile. Later, she texts: "Let\'s hang with the whole group soon 😊"', v:'ph' },
+        { sp:'Game Master', tx:'Respecting her decision — without making it awkward — is exactly how real trust and connection are built.', v:'ph' },
+      ],
+    },
+    flow:[
+      { type:'scenes', key:'intro' },
+      { type:'mcq', i:0 },
+      { type:'path', mi:0 },
+      { type:'boss' }
+    ]
+  },
+
+  /* ─── CH2 FEMALE ─── */
+  ch2_female: {
+    label: 'Chapter 2 · Pregnancy Awareness',
+    intro: [
+      { sp:'Game Master', tx:'Meet Sarah. She\'s 18 and has been dating Tom for 6 months. Tonight, Tom wants to take things further.', v:'ch2scene1' },
+      { sp:'Tom',         tx:'We\'ve been together long enough now... I don\'t think we really need to worry about protection.', v:'ch2scene1' },
+      { sp:'Sarah',       tx:'(thinking) He says pulling out is enough. And I\'ve heard you can\'t get pregnant your first time... right?', v:'ch2scene1' },
+      { sp:'Tom',         tx:'Come on, just trust me. It\'ll be totally fine. I promise.', v:'ch2scene1' },
+    ],
+  mcqs: [
+  {
+    label:'⚔️ Decision Point',
+    bg: 'ch2femaledecision.png', // 👈 ADD YOUR IMAGE HERE
+    q:'What should Sarah do?',
+    opts:[
+      { tx:'😶  Trust Tom and go along without any protection', pk:'noprot', fb:'⚠️ "Pulling out" has roughly a 22% failure rate. There is no truly safe unprotected sex.' },
+      { tx:'✋  Insist they use a condom before anything happens', pk:'condom', fb:'✅ Condoms are 98% effective when used correctly — and protect against STIs too.' },
+      { tx:'🏥  Ask to verify doubts with Qualified Organizations or HealthCare Professionals ', pk:'pill', fb:'✅ Planning ahead and being informed and responsible is the best.' },
+    ]
+  },
+],
+
+    paths: {
+      mcq0_noprot:[
+        { sp:'Game Master', tx:'Two weeks pass. Sarah notices her period is late. Her stomach drops.', v:'pregnancy' },
+        { sp:'Sarah',       tx:'Tom said it would be fine... but something feels very, very wrong right now.', v:'pregnancy' },
+        { sp:'Game Master', tx:'Being risky can lead to unforseen outcomes and can affect your life, Here at B.A.B.E.S, we support Teens who need help', v:'Babes' },
+        
+      ],
+      mcq0_condom:[
+        { sp:'Tom',         tx:'Fine... I guess you\'re right. (He agrees, though somewhat reluctantly.)', v:'ch2scene1' },
+        { sp:'Game Master', tx:'Using protection was the right call. But understanding the full facts about pregnancy is equally important.', v:'ph' },
+        { sp:'Game Master', tx:'Condoms still can fail to protect especially a faulty one like what happened next.', v:'ph' },
+        { sp:'Sarah',       tx:'Tom… I’m pregnant.', v:'Protection' },
+        { sp:'Tom',         tx:'What? That’s not possible… we were careful.', v:'Protection' },
+        { sp:'Sarah',       tx:'Careful? You said it would be fine!', v:'Protection' },
+        { sp:'Tom',         tx:'I didn’t think this would happen… it shouldn’t have—' , v:'Protection' },
+        { sp:'Sarah',       tx:'Well it did! And now I’m the one dealing with it!' , v:'Protection' },
+        { sp:'Tom',         tx:'I’m just… confused, okay? I don’t get how—' , v:'Protection' },
+        { sp:'Sarah',       tx:'I don’t either! But arguing won’t change anything…' , v:'Protection' },
+        { sp:'Game Master', tx:'Any Questions or confusion along with Support can be found at B.A.B.E.S Pregnancy', v:'Babes' },
+      ],
+      mcq0_pill:[
+        { sp:'Sarah',       tx:'I… I don’t feel right about this. I need to be sure before anything happens.', v:'ch2scene1' },
+        { sp:'Game Master', tx:'Sarah decides to reach out to B.A.B.E.S to clarify her doubts.', v:'ph' },
+        { sp:'Sarah',       tx:'(on phone) Hi… I’m really confused. Is it actually safe if we just use protection?', v:'Babescall' },
+        { sp:'Game Master', tx:'B.A.B.E.S explains that condoms are one of the safest methods, but no protection is 100% effective. Any sexual activity carries some risk of pregnancy.', v:'Babescall' },
+        { sp:'Game Master', tx:'They also remind Sarah that at a young age, without financial stability or a clear plan, the safest choice is to wait until she is truly ready.', v:'Babescall' },
+        { sp:'Sarah',       tx:'(thinking) I don’t think I’m ready for this…', v:'ph' },
+        { sp:'Sarah',       tx:'Tom… I don’t want to do this. I’m not ready.', v:'ch2scene1' },
+        { sp:'Tom',         tx:'Wait… seriously?', v:'ch2scene1' },
+        { sp:'Sarah',       tx:'Yeah. I want to be sure about my future first. I’m fine with waiting.', v:'ch2scene1' },
+        { sp:'Game Master', tx:'Choosing to wait shows self-respect and awareness. Making informed decisions protects both your future and well-being.', v:'ph' },
+],
+      mcq1_myth1:[
+        { sp:'Game Master', tx:'❌ Myth busted! Pregnancy can absolutely happen the very first time. Biology has no exceptions for "firsts".', v:'ph' },
+        { sp:'Game Master', tx:'Every unprotected encounter carries real risk — regardless of experience, timing, or how sure you feel.', v:'ph' },
+      ],
+      mcq1_myth2:[
+        { sp:'Game Master', tx:'❌ Not true. The pull-out method has a failure rate of roughly 22% — even when done as correctly as possible.', v:'ph' },
+        { sp:'Game Master', tx:'Pre-ejaculatory fluid can contain sperm. Never rely on pull-out alone as your only form of contraception.', v:'ph' },
+      ],
+      mcq1_fact:[
+        { sp:'Game Master', tx:'✅ Correct! There is no "safe" unprotected sex. Risk is present every single time — no exceptions.', v:'ph' },
+        { sp:'Game Master', tx:'Gold standard: combine condoms (prevents both STIs and pregnancy) with hormonal birth control. Double up, stay safe.', v:'ph' },
+      ],
+    },
+    flow:[
+      { type:'scenes', key:'intro' },
+      { type:'mcq', i:0 },
+      { type:'path', mi:0 },
+      { type:'mcq', i:1 },
+      { type:'path', mi:1 },
+      { type:'boss' }
+    ]
+  },
+
+  /* ─── CH2 MALE ─── */
+ch2_male: {
+  label: 'Chapter 2 · Pregnancy Awareness',
+  intro: [
+    { sp:'Game Master', tx:'Meet Tom. He\'s 18 and has been dating Sarah for 6 months. Tonight, he\'s thinking about taking things further.', v:'ch2scene1' },
+    { sp:'Tom',         tx:'We\'ve been together long enough now... I think it\'s time.', v:'ch2scene1' },
+    { sp:'Sarah',       tx:'I don’t know… are we sure about this?', v:'ch2scene1' },
+    { sp:'Tom',         tx:'(thinking) I heard pulling out is enough… and it’s her first time anyway, right?', v:'ch2scene1' },
+  ],
+
+  mcqs: [
+    {
+      label:'⚔️ Decision Point',
+      bg:'ch2maledecision.png',
+      q:'What should Tom do?',
+      opts:[
+        { tx:'😶  Pressure Sarah and go ahead without protection', pk:'noprot', fb:'⚠️ Pressuring someone and ignoring protection is irresponsible. Pulling out is not a reliable method.' },
+        { tx:'🛡️  Use protection and take responsibility', pk:'condom', fb:'✅ Using protection is responsible, but no method is 100% effective. Pregnancy risk still exists.' },
+        { tx:'📞  Suggest asking B.A.B.E.S or a healthcare professional first', pk:'babes', fb:'✅ Getting proper advice before making a serious decision shows maturity and respect.' },
+      ]
+    },
+  ],
+
+  paths: {
+    mcq0_noprot:[
+      { sp:'Game Master', tx:'Tom ignores the risks and pushes Sarah to continue without protection.', v:'pregnancy' },
+      { sp:'Game Master', tx:'Two weeks later, Sarah tells Tom her period is late.', v:'pregnancy' },
+      { sp:'Sarah',       tx:'Tom… something feels wrong. I think I might be pregnant.', v:'pregnancy' },
+      { sp:'Tom',         tx:'What? That wasn’t supposed to happen…', v:'pregnancy' },
+      { sp:'Game Master', tx:'Unprotected sex can lead to life-changing consequences. Support and guidance are available at B.A.B.E.S.', v:'Babes' },
+    ],
+
+    mcq0_condom:[
+      { sp:'Tom',         tx:'Okay… we’ll use protection. I don’t want to risk it.', v:'ch2scene1' },
+      { sp:'Game Master', tx:'Tom chooses to take responsibility by using protection.', v:'ph' },
+      { sp:'Game Master', tx:'But protection is not perfect. Even condoms can fail if faulty or used incorrectly.', v:'ph' },
+      { sp:'Sarah',       tx:'Tom… I’m pregnant.', v:'Protection' },
+      { sp:'Tom',         tx:'What? How? We were careful.', v:'Protection' },
+      { sp:'Sarah',       tx:'I don’t know… but it happened.', v:'Protection' },
+      { sp:'Tom',         tx:'I thought protection meant we were safe.', v:'Protection' },
+      { sp:'Sarah',       tx:'Safer, Tom. Not impossible.', v:'Protection' },
+      { sp:'Game Master', tx:'Using protection reduces risk, but it does not remove risk completely. If you are confused or need support, B.A.B.E.S can help.', v:'Babes' },
+    ],
+
+    mcq0_babes:[
+      { sp:'Tom',         tx:'Maybe we shouldn’t rush this. Let’s ask someone who actually knows.', v:'ch2scene1' },
+      { sp:'Game Master', tx:'Tom suggests contacting B.A.B.E.S to clarify their doubts before making a decision.', v:'ch2scene1' },
+      { sp:'Tom',         tx:'(on phone) Hi… we’re unsure about protection and pregnancy risk. What should we know?', v:'guycall' },
+      { sp:'Game Master', tx:'B.A.B.E.S explains that condoms are safer than unprotected sex, but no method is 100% effective.', v:'guycall' },
+      { sp:'Game Master', tx:'They also explain that unprotected sex should never be treated as safe, because pregnancy can happen any time.', v:'guycall' },
+      { sp:'Game Master', tx:'At a young age, without financial stability or a clear plan, the safest choice is to wait until both people are truly ready.', v:'guycall' },
+      { sp:'Tom',         tx:'Sarah… I don’t want to pressure you. We don’t have to do this.', v:'ch2scene1' },
+      { sp:'Sarah',       tx:'Really? You’re okay with waiting?', v:'ch2scene1' },
+      { sp:'Tom',         tx:'Yeah. I’d rather protect our future than rush into something we’re not ready for.', v:'ch2scene1' },
+      { sp:'Game Master', tx:'Choosing to wait shows responsibility, respect, and care for both partners.', v:'ph' },
+    ],
+  },
+
+  
+    flow:[
+      { type:'scenes', key:'intro' },
+      { type:'mcq', i:0 },
+      { type:'path', mi:0 },
+      { type:'mcq', i:1 },
+      { type:'path', mi:1 },
+      { type:'boss' }
+    ]
+  },
 };
 
-let currentScene = "start";
-let lastVideo = null;
+/* ════════════════════════════════════════
+   STATE
+════════════════════════════════════════ */
+let selChapter  = null;  // 'ch1' | 'ch2'
+let selGender   = null;  // 'male' | 'female'
+let chapId      = null;  // e.g. 'ch1_female'
+let flowPos     = 0;
+let scenePos    = 0;
+let scenes      = [];
+let choices     = {};    // { mcqIndex: pathKey }
+let lastVidSrc  = null;
+let typeTmr;
 
-function startStory(){ switchScreen("story"); loadScene("start"); }
-
-function loadScene(key){
-  currentScene = key;
-  const scene = scenes[key];
-  document.getElementById("speaker").textContent = scene.speaker.toUpperCase();
-  typeText(document.getElementById("dialogue"), scene.text);
-
-  const vid = document.getElementById("mainVideo");
-  if(scene.video !== lastVideo){
-    setVideo(vid, scene.video);
-    lastVideo = scene.video;
-  }
-
-  const btn = document.getElementById("storyBtn");
-  if(scene.next === "mcq"){
-    btn.textContent = "Make Your Choice →";
-    btn.onclick = ()=> switchScreen("mcq");
-  } else {
-    btn.textContent = "Continue →";
-    btn.onclick = advanceStory;
-  }
+/* ════════════════════════════════════════
+   LANDING → GENDER SELECT
+════════════════════════════════════════ */
+function selectChapter(ch) {
+  selChapter = ch;
+  const labels = { ch1:'📖 Chapter 1 · Consent', ch2:'🌸 Chapter 2 · Pregnancy Awareness' };
+  document.getElementById('gsPill').textContent = labels[ch] || ch;
+  switchScreen('genderSelect');
 }
 
-function advanceStory(){
-  const next = scenes[currentScene].next;
-  if(next === "mcq"){ switchScreen("mcq"); return; }
-  loadScene(next);
+function beginChapter(gender) {
+  selGender = gender;
+  chapId    = selChapter + '_' + gender;
+  flowPos   = 0;
+  choices   = {};
+  lastVidSrc = null;
+  runFlow();
 }
 
-/* ========== MCQ ========== */
-let chosenPath = "safe"; // default
+/* ════════════════════════════════════════
+   FLOW ENGINE
+════════════════════════════════════════ */
+function runFlow() {
+  const ch   = CHAPTERS[chapId];
+  const step = ch.flow[flowPos];
+  if (!step) { goEnd(); return; }
 
-function mcq(btn, choice){
-  document.querySelectorAll(".choice-btn").forEach(b=>b.classList.remove("selected"));
-  btn.classList.add("selected");
-  const fb = document.getElementById("mcqFb");
-  if(choice===2){ fb.textContent="✅ Strong choice. Setting a clear boundary protects you and sends an unmistakable message."; chosenPath="safe"; }
-  else if(choice===1){ fb.textContent="⚠️ Going along when uncomfortable can blur boundaries and put you at risk."; chosenPath="risky"; }
-  else { fb.textContent="⚠️ Silence can be misread as agreement. Consent needs to be clear and active."; chosenPath="passive"; }
-  document.getElementById("mcqContinue").style.display="block";
-}
+  if (step.type === 'scenes') {
+    scenes  = ch[step.key] || ch.intro;
+    scenePos = 0;
+    document.getElementById('storyPill').textContent = ch.label;
+    switchScreen('story');
+    renderScene();
 
-/* ========== POST-MCQ PATH SCENES ========== */
-const pathScenes = {
-  safe: [
-    { speaker:"You",         text:"No. I'm not comfortable with this. I'm leaving.", video:"scene2" },
-    { speaker:"Game Master", text:"Setting boundaries is a sign of strength — not weakness. You acted with courage.", video:"placeholder" },
-  ],
-  risky: [
-    { speaker:"Game Master", text:"You go along, even though something feels deeply off inside.", video:"scene2" },
-    { speaker:"Game Master", text:"Remember: support is always available from BABES!. What happened is not your fault.", video:"placeholder" },
-  ],
-  passive: [
-    { speaker:"Game Master", text:"You stay quiet, hoping the situation resolves itself.", video:"scene2" },
-    { speaker:"Game Master", text:"Silence can be misread as consent. Speaking up — even briefly — makes all the difference.", video:"placeholder" },
-  ],
-};
+  } else if (step.type === 'mcq') {
+    renderMCQ(step.i);
 
-let postIndex = 0;
-let postLastVideo = null;
+  } else if (step.type === 'path') {
+    const key = `mcq${step.mi}_${choices[step.mi]}`;
+    scenes  = ch.paths[key] || [];
+    scenePos = 0;
+    document.getElementById('storyPill').textContent = ch.label;
+    switchScreen('story');
+    renderScene();
 
-function startPostStory(){
-  postIndex = 0;
-  postLastVideo = null;
-  switchScreen("postStory");
-  loadPostScene();
-}
-
-function loadPostScene(){
-  const scenes = pathScenes[chosenPath];
-  const scene = scenes[postIndex];
-  document.getElementById("postSpeaker").textContent = scene.speaker.toUpperCase();
-  typeText(document.getElementById("postDialogue"), scene.text);
-
-  const vid = document.getElementById("postVideo");
-  if(scene.video !== postLastVideo){
-    setVideo(vid, scene.video);
-    postLastVideo = scene.video;
-  }
-
-  const btn = document.getElementById("postStoryBtn");
-  const isLast = postIndex === scenes.length - 1;
-  btn.textContent = isLast ? "Face the Boss →" : "Continue →";
-  btn.onclick = advancePostStory;
-}
-
-function advancePostStory(){
-  const scenes = pathScenes[chosenPath];
-  if(postIndex < scenes.length - 1){
-    postIndex++;
-    loadPostScene();
-  } else {
-    switchScreen("boss");
+  } else if (step.type === 'boss') {
+    switchScreen('boss');
     initBoss();
   }
 }
 
-/* ========== BOSS CHAT (LLM) ========== */
-const conversation = [
+function advFlow() { flowPos++; runFlow(); }
+
+/* ════════════════════════════════════════
+   STORY
+════════════════════════════════════════ */
+function typeText(el, text, speed=20) {
+  clearInterval(typeTmr);
+  el.textContent = ''; let i = 0;
+  typeTmr = setInterval(() => {
+    if (i < text.length) { el.textContent += text[i++]; }
+    else clearInterval(typeTmr);
+  }, speed);
+}
+
+function setVid(key) {
+  const src = VIDS[key] || '';
+  const vid = document.getElementById('mainVid');
+
+  if (src === lastVidSrc) return;
+  lastVidSrc = src;
+
+  if (!src) {
+    vid.src = '';
+    vid.classList.remove('vis');
+    return;
+  }
+
+  // 👇 detect file type
+  if (src.endsWith('.png') || src.endsWith('.jpg') || src.endsWith('.jpeg')) {
+    // hide video
+    vid.style.display = 'none';
+
+    // create or reuse image
+    let img = document.getElementById('sceneImg');
+    if (!img) {
+      img = document.createElement('img');
+      img.id = 'sceneImg';
+      img.style.position = 'absolute';
+      img.style.inset = '0';
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      document.querySelector('.scene-wrap').appendChild(img);
+    }
+
+    img.src = src;
+    img.style.display = 'block';
+
+  } else {
+    // show video
+    vid.style.display = 'block';
+
+    const img = document.getElementById('sceneImg');
+    if (img) img.style.display = 'none';
+
+    vid.src = src;
+    vid.classList.remove('vis');
+    vid.load();
+    vid.play().then(() => vid.classList.add('vis')).catch(() => {});
+  }
+}
+
+function renderScene() {
+  if (scenePos >= scenes.length) { advFlow(); return; }
+  const s = scenes[scenePos];
+  document.getElementById('dlgSpeaker').textContent = s.sp.toUpperCase();
+  typeText(document.getElementById('dlgText'), s.tx);
+  setVid(s.v);
+  // Update button label on last scene
+  const btn = document.getElementById('storyBtn');
+  if (scenePos === scenes.length - 1) {
+    const ch = CHAPTERS[chapId];
+    const next = ch.flow[flowPos + 1];
+    if (!next || next.type === 'boss')       btn.textContent = 'Face the Boss →';
+    else if (next.type === 'mcq')            btn.textContent = 'Make Your Choice →';
+    else                                     btn.textContent = 'Continue →';
+  } else {
+    btn.textContent = 'Continue →';
+  }
+}
+
+function advanceScene() { scenePos++; renderScene(); }
+
+/* ════════════════════════════════════════
+   MCQ
+════════════════════════════════════════ */
+function renderMCQ(idx) {
+  const ch  = CHAPTERS[chapId];
+  const mcq = ch.mcqs[idx];
+
+  document.getElementById('mcqLabel').textContent = mcq.label;
+  document.getElementById('mcqQ').textContent     = mcq.q;
+  document.getElementById('mcqFb').textContent    = '';
+  document.getElementById('mcqFb').className      = 'mcq-fb';
+  document.getElementById('mcqCont').style.display = 'none';
+
+  // 🔥 ADD THIS: set MCQ background image
+  const mcqScreen = document.getElementById('mcq');
+  if (mcq.bg) {
+    mcqScreen.style.backgroundImage = `url(${mcq.bg})`;
+    mcqScreen.style.backgroundSize = 'cover';
+    mcqScreen.style.backgroundPosition = 'center';
+    mcqScreen.style.backgroundRepeat = 'no-repeat';
+  } else {
+    mcqScreen.style.backgroundImage = 'none';
+  }
+
+  const div = document.getElementById('mcqChoices');
+  div.innerHTML = '';
+
+  mcq.opts.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'choice-btn';
+    b.textContent = opt.tx;
+    b.onclick = () => pickChoice(idx, opt.pk, opt.fb, b);
+    div.appendChild(b);
+  });
+
+  switchScreen('mcq');
+}
+function pickChoice(idx, pk, fb, btn) {
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.classList.remove('selected'); b.classList.add('off');
+  });
+  btn.classList.add('selected'); btn.classList.remove('off');
+  choices[idx] = pk;
+  const fbEl = document.getElementById('mcqFb');
+  fbEl.textContent = fb;
+  fbEl.className = fb.startsWith('⚠️') || fb.startsWith('❌') ? 'mcq-fb warn' : 'mcq-fb';
+  document.getElementById('mcqCont').style.display = 'block';
+}
+
+function mcqContinue() { advFlow(); }
+
+/* ════════════════════════════════════════
+   BOSS CHAT
+════════════════════════════════════════ */
+const BOSS_Q = [
   {
-    gmQ: "Why is clear consent important in relationships and social situations? Share your thoughts.",
-    gmReply: (ans) => {
-      const lower = ans.toLowerCase();
-      const good = lower.includes("respect") || lower.includes("safe") || lower.includes("comfort") || lower.includes("right") || lower.includes("trust") || lower.includes("boundar") || lower.includes("protect") || lower.includes("agree") || lower.includes("harm");
-      return good
-        ? "Well said! ✅ Clear consent is the foundation of respect and safety. It ensures everyone involved feels comfortable and valued. Without it, relationships lack trust and people can be harmed. You've understood this well — let's go to Round 2."
-        : "Good attempt! Consent matters because it ensures everyone feels safe and respected. Without clear agreement, one person's discomfort can be ignored — and that can cause real harm. Keep this in mind. Let's move to Round 2.";
+    q: 'Why is clear consent important in relationships and social situations? Share your thoughts.',
+    reply(ans) {
+      const l = ans.toLowerCase();
+      const ok = ['respect','safe','comfort','trust','boundar','protect','agree','harm','right'].some(w => l.includes(w));
+      return ok
+        ? 'Well said! ✅ Clear consent is the foundation of respect and safety. It ensures everyone involved feels comfortable and genuinely valued. Without it, relationships lack real trust — and people get hurt. You\'ve understood this well. Let\'s move to Round 2.'
+        : 'Good attempt. Consent matters because it ensures everyone feels safe and respected. Without clear agreement, one person\'s discomfort gets ignored — and that causes real harm. Keep this in mind. Let\'s move to Round 2.';
     }
   },
   {
-    gmQ: "Why do people sometimes struggle to say no, even when they feel uncomfortable?",
-    gmReply: (ans) => {
-      const lower = ans.toLowerCase();
-      const good = lower.includes("pressure") || lower.includes("awkward") || lower.includes("fear") || lower.includes("embarrass") || lower.includes("judge") || lower.includes("reject") || lower.includes("social") || lower.includes("expect") || lower.includes("guilt") || lower.includes("shy");
-      return good
-        ? "That's right — peer pressure is one of the biggest reasons. 🎯 Fear of being judged, making things awkward, or hurting someone's feelings can make saying no feel almost impossible. But remember: your discomfort is always more important than someone else's convenience. You have <strong>passed the Boss Fight!</strong> 🏆"
-        : "Good thinking! People often struggle because of peer pressure, fear of judgment, or not wanting to seem rude. These social forces are powerful — but your boundaries always come first. You have <strong>passed the Boss Fight!</strong> 🏆";
+    q: 'Why do people sometimes struggle to say no, even when they feel uncomfortable?',
+    reply(ans) {
+      const l = ans.toLowerCase();
+      const ok = ['pressure','awkward','fear','embarrass','judge','reject','social','guilt','shy','expect'].some(w => l.includes(w));
+      return ok
+        ? 'That\'s right — peer pressure is one of the biggest reasons. 🎯 Fear of being judged, making things awkward, or hurting someone\'s feelings can make saying no feel almost impossible. But your discomfort always matters more than someone else\'s convenience. You have <strong>passed the Boss Fight!</strong> 🏆'
+        : 'Good thinking! People often struggle because of peer pressure, fear of judgment, or not wanting to seem rude. These social forces are powerful — but your boundaries always come first. You have <strong>passed the Boss Fight!</strong> 🏆';
     },
     last: true
   }
 ];
 
-let bossStage = 0;
-let waitingForUser = false;
+let bossStage = 0, waitUser = false;
 
-function initBoss(){
-  document.getElementById("chatLog").innerHTML = "";
-  bossStage = 0;
-  waitingForUser = false;
-  document.getElementById("nextRow").style.display = "none";
-  document.getElementById("inputArea").style.display = "flex";
-  updateStageLabel();
-  setTimeout(()=> gmSay(conversation[0].gmQ, true), 400);
+function initBoss() {
+  document.getElementById('chatLog').innerHTML = '';
+  bossStage = 0; waitUser = false;
+  document.getElementById('nextRow').style.display = 'none';
+  document.getElementById('chatIn').style.display  = 'flex';
+  updRnd();
+  setTimeout(() => gmSay(BOSS_Q[0].q, true), 400);
 }
 
-function updateStageLabel(){
-  document.getElementById("stageLabel").textContent = `Round ${bossStage+1} / ${conversation.length}`;
+function updRnd() {
+  document.getElementById('bossRnd').textContent = `Round ${bossStage+1} / ${BOSS_Q.length}`;
 }
 
-function gmSay(text, enableAfter=false){
-  const log = document.getElementById("chatLog");
-  const typing = document.createElement("div");
-  typing.className = "msg gm"; typing.id = "typing";
-  typing.innerHTML = `<div class="msg-avatar">🧙</div><div class="msg-bubble typing-indicator"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
-  log.appendChild(typing); log.scrollTop = log.scrollHeight;
+function gmSay(text, enable=false) {
+  const log = document.getElementById('chatLog');
+  const t = document.createElement('div');
+  t.className = 'msg gm'; t.id = 'typing';
+  t.innerHTML = `<div class="msg-av">🧙</div><div class="msg-bbl typing-wrap"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>`;
+  log.appendChild(t); log.scrollTop = 9999;
 
-  setTimeout(()=>{
-    typing.remove();
-    const msg = document.createElement("div");
-    msg.className = "msg gm";
-    msg.innerHTML = `<div class="msg-avatar">🧙</div><div class="msg-bubble">${text}</div>`;
-    log.appendChild(msg); log.scrollTop = log.scrollHeight;
-    if(enableAfter) enableInput();
-  }, 1200);
+  setTimeout(() => {
+    t.remove();
+    const m = document.createElement('div');
+    m.className = 'msg gm';
+    m.innerHTML = `<div class="msg-av">🧙</div><div class="msg-bbl">${text}</div>`;
+    log.appendChild(m); log.scrollTop = 9999;
+    if (enable) enableIn();
+  }, 1300);
 }
 
-function enableInput(){
-  waitingForUser = true;
-  document.getElementById("sendBtn").disabled = false;
-  document.getElementById("chatInput").disabled = false;
-  document.getElementById("chatInput").focus();
-}
+function enableIn()  { waitUser = true;  document.getElementById('sendBtn').disabled = false; document.getElementById('chatInput').disabled = false; document.getElementById('chatInput').focus(); }
+function disableIn() { waitUser = false; document.getElementById('sendBtn').disabled = true;  document.getElementById('chatInput').disabled = true; }
 
-function disableInput(){
-  waitingForUser = false;
-  document.getElementById("sendBtn").disabled = true;
-  document.getElementById("chatInput").disabled = true;
-}
-
-function sendUserMsg(){
-  if(!waitingForUser) return;
-  const ta = document.getElementById("chatInput");
+function sendMsg() {
+  if (!waitUser) return;
+  const ta   = document.getElementById('chatInput');
   const text = ta.value.trim();
-  if(text.length < 5){ ta.style.borderColor="#f87171"; setTimeout(()=>ta.style.borderColor="",800); return; }
-  ta.value = ""; ta.style.height="auto";
-  disableInput();
+  if (text.length < 5) { ta.style.borderColor='#f87171'; setTimeout(()=>ta.style.borderColor='',700); return; }
+  ta.value = ''; ta.style.height = 'auto';
+  disableIn();
 
-  const log = document.getElementById("chatLog");
-  const msg = document.createElement("div");
-  msg.className = "msg user";
-  msg.innerHTML = `<div class="msg-avatar">🧑</div><div class="msg-bubble">${escHtml(text)}</div>`;
-  log.appendChild(msg); log.scrollTop = log.scrollHeight;
+  const log = document.getElementById('chatLog');
+  const m = document.createElement('div');
+  m.className = 'msg usr';
+  m.innerHTML = `<div class="msg-av">🧑</div><div class="msg-bbl">${esc(text)}</div>`;
+  log.appendChild(m); log.scrollTop = 9999;
 
-  const stage = conversation[bossStage];
-  const reply = stage.gmReply(text);
+  const stage  = BOSS_Q[bossStage];
+  const reply  = stage.reply(text);
   const isLast = !!stage.last;
 
-  setTimeout(()=>{
+  setTimeout(() => {
     gmSay(reply, !isLast);
-    if(isLast){
-      setTimeout(()=>{
-        document.getElementById("inputArea").style.display = "none";
-        document.getElementById("nextRow").style.display = "block";
-      }, 1800);
+    if (isLast) {
+      setTimeout(() => {
+        document.getElementById('chatIn').style.display  = 'none';
+        document.getElementById('nextRow').style.display = 'block';
+      }, 1900);
     } else {
       bossStage++;
-      updateStageLabel();
-      setTimeout(()=>{ gmSay(conversation[bossStage].gmQ, true); }, 2200);
+      updRnd();
+      setTimeout(() => gmSay(BOSS_Q[bossStage].q, true), 2300);
     }
-  }, 600);
+  }, 700);
 }
 
-function handleKey(e){ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendUserMsg(); } }
-function autoResize(el){ el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,120)+"px"; }
-function escHtml(t){ const d=document.createElement("div"); d.textContent=t; return d.innerHTML; }
-function goToEnd(){ switchScreen("end"); }
+function handleKey(e)    { if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); sendMsg(); } }
+function autoResize(el)  { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,110)+'px'; }
+function esc(t)          { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
 
-function switchScreen(id){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+/* ════════════════════════════════════════
+   UTILS
+════════════════════════════════════════ */
+function goEnd() { switchScreen('end'); }
+
+function switchScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 </script>
 </body>
