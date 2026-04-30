@@ -718,6 +718,137 @@ body {
   backdrop-filter: blur(12px);
 }
 
+/* ── RPG Boss Video + Command UI ───────────────── */
+.boss-video {
+  background: transparent;
+  mix-blend-mode: normal;
+}
+
+.boss-img-container::before {
+  content: '';
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,58,237,0.22), transparent 68%);
+  filter: blur(14px);
+  opacity: 0.95;
+  animation: auraPulse 2.4s ease-in-out infinite;
+}
+@keyframes auraPulse {
+  0%,100% { transform: scale(0.95); opacity: 0.55; }
+  50%     { transform: scale(1.08); opacity: 0.95; }
+}
+
+.player-hp-zone {
+  width: min(340px, 90vw);
+  margin-top: 8px;
+}
+.player-hp-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #38bdf8;
+}
+.player-hp-track {
+  height: 12px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(56,189,248,0.4);
+  border-radius: 999px; overflow: hidden;
+  box-shadow: 0 0 16px rgba(56,189,248,0.16), inset 0 2px 4px rgba(0,0,0,0.5);
+}
+.player-hp-fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #0ea5e9 0%, #22d3ee 70%, #a7f3d0 100%);
+  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.battle-action-panel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px;
+  background: rgba(2,6,23,0.72);
+  border: 1px solid rgba(167,139,250,0.24);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  backdrop-filter: blur(14px);
+}
+.move-btn {
+  min-height: 58px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  color: #f5f3ff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 9px 10px;
+  text-align: left;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.25);
+  transition: transform 0.15s, border-color 0.15s, background 0.15s, opacity 0.15s;
+}
+.move-btn small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.move-btn:hover:not(:disabled) { transform: translateY(-2px); border-color: rgba(167,139,250,0.55); background: rgba(124,58,237,0.18); }
+.move-btn:disabled { opacity: 0.38; cursor: not-allowed; transform: none; }
+.move-btn.attack { background: linear-gradient(135deg, rgba(220,38,38,0.28), rgba(147,51,234,0.18)); }
+.move-btn.special { background: linear-gradient(135deg, rgba(245,158,11,0.24), rgba(236,72,153,0.18)); }
+.move-btn.info { background: rgba(15,23,42,0.75); }
+
+.battle-log {
+  border-radius: 0;
+}
+
+.boss-modal {
+  position: absolute; inset: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.58);
+  backdrop-filter: blur(6px);
+  padding: 18px;
+}
+.boss-modal-card {
+  width: min(540px, 94vw);
+  background: linear-gradient(180deg, rgba(17,10,32,0.96), rgba(3,7,18,0.97));
+  border: 1px solid rgba(167,139,250,0.32);
+  border-top-color: rgba(250,204,21,0.3);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 0 60px rgba(124,58,237,0.32), 0 20px 70px rgba(0,0,0,0.7);
+  position: relative;
+}
+.boss-modal-card h3 {
+  font-family: 'Cinzel', serif;
+  color: #facc15;
+  margin-bottom: 12px;
+  letter-spacing: 0.06em;
+}
+.boss-modal-card p, .boss-modal-card li {
+  color: #ddd6fe;
+  line-height: 1.7;
+  font-size: 0.94rem;
+}
+.boss-modal-card ul { margin-left: 18px; margin-top: 8px; }
+.modal-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 34px; height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+@media (max-width: 720px) {
+  .battle-action-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .boss-img-container, .boss-img { width: 180px; height: 180px; }
+}
+
 /* ═══════════════════════════════════════════════
    CHAPTER CLEARED OVERLAY
 ═══════════════════════════════════════════════ */
@@ -978,6 +1109,15 @@ body {
   <!-- Hit flash -->
   <div class="hit-flash" id="hitFlash"></div>
 
+  <!-- Info modal -->
+  <div class="boss-modal" id="bossModal" style="display:none">
+    <div class="boss-modal-card">
+      <button class="modal-close" onclick="closeBossModal()">✕</button>
+      <h3 id="bossModalTitle">Boss Info</h3>
+      <div id="bossModalText"></div>
+    </div>
+  </div>
+
   <!-- Main layout -->
   <div class="boss-battle-layout">
 
@@ -1009,8 +1149,8 @@ body {
         <!-- Damage number -->
         <div class="dmg-num" id="dmgNum">⚔️ -50</div>
 
-        <!-- Boss image -->
-        <img src="Boss/otherboss.png" id="bossImg" class="boss-img" alt="Boss: The Crowned Hunter" />
+        <!-- Boss video avatar: transparent video recommended -->
+        <video src="Boss/bosstest.mp4" id="bossVid" class="boss-img boss-video" autoplay muted playsinline loop></video>
       </div>
 
       <!-- HP Zone -->
@@ -1029,10 +1169,40 @@ body {
           </div>
         </div>
       </div>
+
+      <!-- Player HP Zone -->
+      <div class="player-hp-zone">
+        <div class="boss-hp-header">
+          <span class="player-hp-name">🛡️ Your Resolve</span>
+          <span class="boss-hp-val" id="playerHpVal">100 / 100 HP</span>
+        </div>
+        <div class="player-hp-track">
+          <div class="player-hp-fill" id="playerHpFill" style="width:100%"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Battle chat -->
     <div class="battle-chat-zone">
+      <div class="battle-action-panel" id="battleActions">
+        <button class="move-btn attack command-btn" id="attackBtn" onclick="chooseMove('attack')">
+          ⚔️ Attack
+          <small>Easy question · lower damage</small>
+        </button>
+        <button class="move-btn special command-btn" id="specialBtn" onclick="chooseMove('special')">
+          ✦ Special Attack
+          <small>Hard question · higher damage</small>
+        </button>
+        <button class="move-btn info" onclick="showBossInfo()">
+          ☠️ Boss Info
+          <small>Learn the enemy</small>
+        </button>
+        <button class="move-btn info" onclick="showBattleInfo()">
+          ℹ️ Info
+          <small>How attacks work</small>
+        </button>
+      </div>
+
       <div class="battle-log" id="chatLog"></div>
 
       <!-- Attack banner -->
@@ -1044,12 +1214,12 @@ body {
 
       <div class="battle-input-row" id="chatIn">
         <textarea id="chatInput"
-          placeholder="⚔️ Type your answer to strike the boss..."
+          placeholder="Choose Attack or Special Attack first..."
           rows="1"
           onkeydown="handleKey(event)"
           oninput="autoResize(this)"></textarea>
 
-        <button class="battle-send-btn" id="sendBtn" onclick="sendMsg()" title="Attack!">⚔️</button>
+        <button class="battle-send-btn" id="sendBtn" onclick="sendMsg()" title="Submit Answer">➤</button>
       </div>
 
       <div class="boss-next-row" id="nextRow" style="display:none">
@@ -1074,7 +1244,7 @@ body {
       <h2 class="cleared-title">Boss Defeated!</h2>
 
       <p class="cleared-subtitle">
-        You conquered <strong style="color:#f87171">Risky Thinking</strong> with knowledge, empathy, and clear thinking. The arena is yours.
+        You conquered <strong style="color:#f87171">The Crowned Hunter</strong> with knowledge, responsibility, and clear thinking. The arena is yours.
       </p>
 
       <div class="cleared-xp-badge">⚡ +150 XP Earned</div>
@@ -1702,74 +1872,126 @@ function mcqContinue() { advFlow(); }
 /* ════════════════════════════════════════
    BOSS BATTLE — RPG SYSTEM
 ════════════════════════════════════════ */
-const BOSS_Q = [
-  {
-    q: 'Why is clear consent important in relationships and social situations? Share your thoughts.',
-    reply(ans) {
-      const l = ans.toLowerCase();
-      const ok = ['respect','safe','comfort','trust','boundar','protect','agree','harm','right'].some(w => l.includes(w));
-      return ok
-        ? '✅ Well said! Clear consent is the foundation of respect and safety. It ensures everyone feels genuinely valued. Without it, relationships lack real trust — and people get hurt. You\'ve struck true. Prepare for Round 2!'
-        : '✅ Good effort. Consent matters because it ensures everyone feels safe and respected. Without clear agreement, one person\'s discomfort gets ignored — causing real harm. The Boss takes damage! Round 2 incoming…';
-    }
-  },
-  {
-    q: 'Why do people sometimes struggle to say no, even when they feel uncomfortable?',
-    reply(ans) {
-      const l = ans.toLowerCase();
-      const ok = ['pressure','awkward','fear','embarrass','judge','reject','social','guilt','shy','expect'].some(w => l.includes(w));
-      return ok
-        ? '🎯 Exactly right! Peer pressure, fear of judgment, not wanting to seem rude — these are powerful social forces. But your boundaries always matter more than someone else\'s convenience. <strong>BOSS DEFEATED! 🏆</strong>'
-        : '✅ Strong response! Social pressure and fear of judgment often make saying no feel impossible. But your discomfort always comes first. <strong>BOSS DEFEATED! 🏆</strong>';
+const BOSS_ASSETS = {
+  idle: 'Boss/bosstest.mp4',
+  damaged: 'Boss/Damaged.mp4',
+  attack: 'Boss/Attack.mp4'
+};
+
+const BOSS_INFO_HTML = `
+  <p><strong>The Crowned Hunter</strong> is a dark fantasy boss that represents risky thinking, myths, pressure, and poor planning around pregnancy awareness.</p>
+  <p>It grows stronger when players rely on rumours, avoid difficult conversations, or ignore protection and support options.</p>
+`;
+
+const BATTLE_INFO_HTML = `
+  <ul>
+    <li><strong>Attack</strong> gives an easier question and deals less damage.</li>
+    <li><strong>Special Attack</strong> gives a harder critical-thinking question and deals more damage.</li>
+    <li>After every answer, the boss retaliates with its own attack.</li>
+    <li>Reduce the boss HP to zero before your Resolve reaches zero.</li>
+  </ul>
+`;
+
+const BATTLE_QUESTIONS = {
+  attack: [
+    {
+      q: 'What is one of the best ways to prevent pregnancy when someone is not ready to be a parent?',
+      keywords: ['condom','contraception','birth control','protection','abstinence','wait','avoid sex','doctor','clinic'],
+      good: '✅ Good strike. The safest choice is to wait if someone is not ready. If someone chooses to be sexually active, reliable contraception and condoms reduce risk, and asking a healthcare professional is the responsible move.',
+      fallback: '✅ The key lesson: if someone is not ready for pregnancy, they should wait, use reliable protection if sexually active, and get advice from a trusted healthcare professional instead of relying on rumours.'
     },
-    last: true
-  }
-];
+    {
+      q: 'Why is relying only on “pulling out” risky?',
+      keywords: ['unreliable','fail','pre-cum','precum','timing','mistake','pregnancy','sti','protection'],
+      good: '✅ Correct. Pulling out is unreliable because timing mistakes happen and pregnancy risk can still exist. It also does not protect well against STIs.',
+      fallback: '✅ Pulling out is risky because it is easy to make mistakes, it can still lead to pregnancy, and it does not give strong protection against STIs.'
+    },
+    {
+      q: 'Who can a young person talk to if they are confused about pregnancy, protection, or sexual health?',
+      keywords: ['healthcare','doctor','clinic','nurse','trusted adult','qualified','professional','counsellor','babes','organization'],
+      good: '✅ Exactly. A trusted adult, counsellor, qualified organisation, clinic, doctor, or healthcare professional can provide safer and more accurate support.',
+      fallback: '✅ A young person should speak to a trusted adult, counsellor, qualified organisation, or healthcare professional instead of guessing alone.'
+    }
+  ],
+  special: [
+    {
+      q: 'Why might teenage pregnancy still happen or even rise in a place like Singapore even if schools include sex education?',
+      keywords: ['stigma','shame','access','pressure','peer','communication','parents','myths','misinformation','confidence','contraception','relationship','culture','internet'],
+      good: '🌟 Powerful answer. Education alone is not always enough. Stigma, peer pressure, myths online, lack of confidence buying protection, poor communication, and fear of asking adults can still lead to risky choices.',
+      fallback: '🌟 Strong attempt. A possible answer is that lessons in school may not fully overcome stigma, embarrassment, peer pressure, misinformation, poor communication, or difficulty accessing protection and support.'
+    },
+    {
+      q: 'Why is “knowing the facts” different from actually making a safe decision in the moment?',
+      keywords: ['pressure','emotion','fear','confidence','communication','boundary','partner','awkward','judgement','plan'],
+      good: '🌟 Excellent. Someone may know the facts but still struggle because of emotions, partner pressure, fear of judgment, lack of planning, or not knowing how to communicate boundaries.',
+      fallback: '🌟 Good thinking. Facts matter, but real decisions are affected by emotions, pressure, fear, confidence, communication, and planning.'
+    }
+  ]
+};
+
+const MOVE_CONFIG = {
+  attack:  { label: 'Attack',         icon: '⚔️', damage: 25, weakDamage: 15, bossDamage: 12, questionBank: 'attack'  },
+  special: { label: 'Special Attack', icon: '✦', damage: 45, weakDamage: 30, bossDamage: 18, questionBank: 'special' }
+};
 
 /* HP system */
-const BOSS_MAX_HP = 100;
-let bossHp        = 100;
-let bossStage     = 0;
-let waitUser      = false;
+const BOSS_MAX_HP   = 100;
+const PLAYER_MAX_HP = 100;
+let bossHp          = 100;
+let playerHp        = 100;
+let bossStage       = 0;
+let waitUser        = false;
+let currentMove     = null;
+let currentQuestion = null;
+let bossBusy        = false;
+let attackQIdx      = 0;
+let specialQIdx     = 0;
 
 /* Attack messages that cycle */
 const ATTACK_MSGS = [
-  '⚔️  CRITICAL HIT! EFFECTIVE RESPONSE!  ⚔️',
-  '🔥  KNOWLEDGE STRIKE!  −50 HP  🔥',
-  '💥  WEAKNESS EXPOSED!  BOSS STAGGERED!  💥',
-  '🌟  DECISIVE BLOW!  RISKY THINKING FALTERS!  🌟',
+  '⚔️  CLEAN HIT! KNOWLEDGE STRIKE LANDED!  ⚔️',
+  '🔥  WEAKNESS EXPOSED! THE HUNTER STAGGERS!  🔥',
+  '💥  TRUTH CUTS THROUGH THE VOID!  💥',
+  '🌟  DECISIVE BLOW! RESPONSIBILITY WINS GROUND!  🌟',
 ];
 let attackMsgIdx = 0;
 
 function initBoss() {
-  /* Reset HP */
-  bossHp    = BOSS_MAX_HP;
-  bossStage = 0;
-  waitUser  = false;
+  bossHp      = BOSS_MAX_HP;
+  playerHp    = PLAYER_MAX_HP;
+  bossStage   = 0;
+  waitUser    = false;
+  currentMove = null;
+  currentQuestion = null;
+  bossBusy    = false;
+  attackQIdx  = 0;
+  specialQIdx = 0;
 
-  /* Reset UI */
-  document.getElementById('chatLog').innerHTML    = '';
+  document.getElementById('chatLog').innerHTML = '';
   document.getElementById('nextRow').style.display = 'none';
-  document.getElementById('chatIn').style.display  = 'flex';
+  document.getElementById('nextRow').innerHTML = '<button class="btn" onclick="showChapterCleared()">🏆 Claim Victory</button>';
+  document.getElementById('chatIn').style.display = 'flex';
+  document.getElementById('battleActions').style.display = 'grid';
   document.getElementById('chapterCleared').style.display = 'none';
   document.getElementById('attackBanner').classList.remove('show');
+  document.getElementById('bossModal').style.display = 'none';
 
-  /* Reset boss visuals */
-  const bImg = document.getElementById('bossImg');
-  bImg.src = 'Boss/otherboss.png';
-  bImg.style.opacity = '1';
-  bImg.classList.remove('hit','dead');
-  bImg.style.animation = '';
-  setTimeout(() => { bImg.style.animation = ''; }, 10);
-
-  updateHpBar(100, 100);
+  updateHpBar(bossHp, BOSS_MAX_HP);
+  updatePlayerHpBar(playerHp, PLAYER_MAX_HP);
   updateRound();
+  setBossVideo('idle', true, true);
+  disableAnswerInput('Choose Attack or Special Attack first...');
+  setCommandButtonsDisabled(true);
 
-  setTimeout(() => gmSay(BOSS_Q[0].q, true), 500);
+  setTimeout(() => {
+    gmSay('The Crowned Hunter enters the arena. Choose <strong>Attack</strong> for an easier question, or <strong>Special Attack</strong> for a harder question with greater damage.', false, () => {
+      setCommandButtonsDisabled(false);
+    });
+  }, 500);
 }
 
 function updateRound() {
-  document.getElementById('bossRnd').textContent = `Round ${bossStage + 1} / ${BOSS_Q.length}`;
+  document.getElementById('bossRnd').textContent = `Turn ${bossStage + 1}`;
 }
 
 function updateHpBar(current, max) {
@@ -1778,47 +2000,132 @@ function updateHpBar(current, max) {
   document.getElementById('bossHpVal').textContent  = `${Math.max(0,current)} / ${max} HP`;
 }
 
-/* Trigger attack animation + HP drain */
-function triggerAttack(damage) {
-  /* 1. Screen flash */
+function updatePlayerHpBar(current, max) {
+  const pct  = Math.max(0, (current / max) * 100);
+  document.getElementById('playerHpFill').style.width = pct + '%';
+  document.getElementById('playerHpVal').textContent  = `${Math.max(0,current)} / ${max} HP`;
+}
+
+function setBossVideo(state, loop = false, muted = false, onEnded = null) {
+  const vid = document.getElementById('bossVid');
+  if (!vid) return;
+
+  vid.pause();
+  vid.onended = null;
+  vid.src = BOSS_ASSETS[state] || BOSS_ASSETS.idle;
+  vid.loop = loop;
+  vid.playsInline = true;
+  vid.muted = muted;
+  if (muted) vid.setAttribute('muted', '');
+  else vid.removeAttribute('muted');
+
+  vid.load();
+  vid.onended = () => {
+    vid.onended = null;
+    if (onEnded) onEnded();
+  };
+
+  vid.play().catch(err => {
+    console.warn('Boss video could not play:', state, err);
+    if (onEnded) setTimeout(onEnded, 900);
+  });
+}
+
+function setCommandButtonsDisabled(disabled) {
+  document.querySelectorAll('.command-btn').forEach(btn => btn.disabled = disabled);
+}
+
+function chooseMove(type) {
+  if (bossBusy || waitUser || bossHp <= 0 || playerHp <= 0) return;
+
+  currentMove = MOVE_CONFIG[type];
+  if (!currentMove) return;
+
+  const bank = BATTLE_QUESTIONS[currentMove.questionBank];
+  const idx = type === 'attack' ? attackQIdx++ : specialQIdx++;
+  currentQuestion = bank[idx % bank.length];
+
+  setCommandButtonsDisabled(true);
+  disableAnswerInput('Question incoming...');
+
+  const intro = type === 'special'
+    ? '✦ <strong>Special Attack selected.</strong> Harder question, higher damage.'
+    : '⚔️ <strong>Attack selected.</strong> Easier question, lower damage.';
+
+  gmSay(`${intro}<br><br>${currentQuestion.q}`, true);
+}
+
+function triggerPlayerAttack(damage, moveLabel) {
   const flash = document.getElementById('hitFlash');
   flash.classList.remove('active');
   void flash.offsetWidth;
   flash.classList.add('active');
   setTimeout(() => flash.classList.remove('active'), 500);
 
-  /* 2. Boss shake */
-  const bImg = document.getElementById('bossImg');
-  bImg.classList.remove('hit');
-  void bImg.offsetWidth;
-  bImg.classList.add('hit');
-  setTimeout(() => bImg.classList.remove('hit'), 500);
-
-  /* 3. Slash FX */
   const slash = document.getElementById('slashFx');
   slash.classList.remove('active');
   void slash.offsetWidth;
   slash.classList.add('active');
   setTimeout(() => slash.classList.remove('active'), 600);
 
-  /* 4. Damage number */
   const dmgEl = document.getElementById('dmgNum');
-  dmgEl.textContent = `⚔️ −${damage}`;
+  dmgEl.textContent = `${moveLabel} −${damage}`;
   dmgEl.classList.remove('pop');
   void dmgEl.offsetWidth;
   dmgEl.classList.add('pop');
   setTimeout(() => dmgEl.classList.remove('pop'), 1200);
 
-  /* 5. HP bar drain */
   bossHp = Math.max(0, bossHp - damage);
   updateHpBar(bossHp, BOSS_MAX_HP);
 
-  /* 6. Attack banner */
   const banner = document.getElementById('attackBanner');
   document.getElementById('attackBannerText').textContent = ATTACK_MSGS[attackMsgIdx % ATTACK_MSGS.length];
   attackMsgIdx++;
   banner.classList.add('show');
   setTimeout(() => banner.classList.remove('show'), 2500);
+
+  setBossVideo('damaged', false, false, () => {
+    if (bossHp > 0) setBossVideo('idle', true, true);
+  });
+}
+
+function triggerBossCounterAttack(damage, onDone) {
+  bossBusy = true;
+  gmSay('☠️ The Crowned Hunter retaliates!', false);
+
+  setTimeout(() => {
+    setBossVideo('attack', false, false, () => {
+      playerHp = Math.max(0, playerHp - damage);
+      updatePlayerHpBar(playerHp, PLAYER_MAX_HP);
+
+      const banner = document.getElementById('attackBanner');
+      document.getElementById('attackBannerText').textContent = `☠️ BOSS ATTACK! −${damage} RESOLVE`;
+      banner.classList.add('show');
+      setTimeout(() => banner.classList.remove('show'), 2200);
+
+      setBossVideo('idle', true, true);
+      bossBusy = false;
+      if (onDone) onDone();
+    });
+  }, 900);
+}
+
+function showBossInfo() {
+  showBossModal('☠️ Boss Info', BOSS_INFO_HTML);
+}
+
+function showBattleInfo() {
+  showBossModal('ℹ️ Battle Info', BATTLE_INFO_HTML);
+}
+
+function showBossModal(title, html) {
+  document.getElementById('bossModalTitle').textContent = title;
+  document.getElementById('bossModalText').innerHTML = html;
+  document.getElementById('bossModal').style.display = 'flex';
+}
+
+function closeBossModal() {
+  document.getElementById('bossModal').style.display = 'none';
 }
 
 /* Show chapter cleared with particle burst */
@@ -1849,16 +2156,14 @@ function spawnParticles() {
       border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
     `;
     container.appendChild(p);
-    /* Stagger */
     setTimeout(() => p.classList.add('active'), i * 15);
   }
 }
 
 /* GM message */
-function gmSay(text, enableAfter = false) {
+function gmSay(text, enableAfter = false, onDone = null) {
   const log = document.getElementById('chatLog');
 
-  /* Typing indicator */
   const typing = document.createElement('div');
   typing.className = 'msg gm';
   typing.innerHTML = `<div class="msg-av">🧙</div><div class="msg-bbl typing-wrap"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>`;
@@ -1873,24 +2178,41 @@ function gmSay(text, enableAfter = false) {
     log.appendChild(m);
     log.scrollTop = 9999;
     if (enableAfter) enableInput();
+    if (onDone) onDone();
   }, 1300);
 }
 
 function enableInput() {
   waitUser = true;
-  document.getElementById('sendBtn').disabled    = false;
-  document.getElementById('chatInput').disabled  = false;
-  document.getElementById('chatInput').focus();
+  const sendBtn = document.getElementById('sendBtn');
+  const chatInput = document.getElementById('chatInput');
+  sendBtn.disabled = false;
+  chatInput.disabled = false;
+  chatInput.placeholder = 'Type your answer, then press ➤...';
+  chatInput.focus();
+}
+
+function disableAnswerInput(placeholder = 'Choose Attack or Special Attack first...') {
+  waitUser = false;
+  const sendBtn = document.getElementById('sendBtn');
+  const chatInput = document.getElementById('chatInput');
+  sendBtn.disabled = true;
+  chatInput.disabled = true;
+  chatInput.placeholder = placeholder;
 }
 
 function disableInput() {
-  waitUser = false;
-  document.getElementById('sendBtn').disabled   = true;
-  document.getElementById('chatInput').disabled = true;
+  disableAnswerInput('Resolving turn...');
+}
+
+function evaluateAnswer(ans, q) {
+  const l = ans.toLowerCase();
+  return q.keywords.some(w => l.includes(w));
 }
 
 function sendMsg() {
-  if (!waitUser) return;
+  if (!waitUser || !currentMove || !currentQuestion || bossBusy) return;
+
   const ta   = document.getElementById('chatInput');
   const text = ta.value.trim();
   if (text.length < 5) {
@@ -1901,7 +2223,6 @@ function sendMsg() {
   ta.value = ''; ta.style.height = 'auto';
   disableInput();
 
-  /* Show user message */
   const log = document.getElementById('chatLog');
   const um  = document.createElement('div');
   um.className = 'msg usr';
@@ -1909,36 +2230,51 @@ function sendMsg() {
   log.appendChild(um);
   log.scrollTop = 9999;
 
-  const stage  = BOSS_Q[bossStage];
-  const reply  = stage.reply(text);
-  const isLast = !!stage.last;
+  const strongAnswer = evaluateAnswer(text, currentQuestion);
+  const damage = strongAnswer ? currentMove.damage : currentMove.weakDamage;
+  const reply = strongAnswer ? currentQuestion.good : currentQuestion.fallback;
+  const bossDamage = currentMove.bossDamage;
+  const moveLabel = `${currentMove.icon} ${currentMove.label}`;
 
-  /* Trigger attack immediately */
-  setTimeout(() => triggerAttack(50), 200);
+  bossStage++;
+  updateRound();
+  bossBusy = true;
 
-  /* After attack, show GM response */
+  setTimeout(() => triggerPlayerAttack(damage, moveLabel), 200);
+
   setTimeout(() => {
-    gmSay(reply, !isLast);
-
-    if (isLast) {
-      /* Boss dead — death animation then show victory button */
-      setTimeout(() => {
-        const bImg = document.getElementById('bossImg');
-        bImg.classList.remove('hit');
-        bImg.classList.add('dead');
-
+    gmSay(`${reply}<br><br><strong>${moveLabel}</strong> dealt <strong>${damage} damage</strong>.`, false, () => {
+      if (bossHp <= 0) {
         setTimeout(() => {
-          document.getElementById('chatIn').style.display  = 'none';
-          document.getElementById('attackBanner').classList.remove('show');
+          setBossVideo('damaged', false, false, () => {
+            document.getElementById('chatIn').style.display = 'none';
+            document.getElementById('battleActions').style.display = 'none';
+            document.getElementById('attackBanner').classList.remove('show');
+            document.getElementById('nextRow').style.display = 'block';
+            bossBusy = false;
+          });
+        }, 700);
+        return;
+      }
+
+      triggerBossCounterAttack(bossDamage, () => {
+        if (playerHp <= 0) {
+          gmSay('💀 Your Resolve has fallen to zero. The lesson is not lost — recover, rethink your strategy, and try again.', false);
+          document.getElementById('chatIn').style.display = 'none';
+          document.getElementById('battleActions').style.display = 'none';
+          document.getElementById('nextRow').innerHTML = '<button class="btn" onclick="initBoss()">🔄 Retry Battle</button>';
           document.getElementById('nextRow').style.display = 'block';
-        }, 900);
-      }, 1800);
-    } else {
-      bossStage++;
-      updateRound();
-      setTimeout(() => gmSay(BOSS_Q[bossStage].q, true), 2400);
-    }
-  }, 900);
+          return;
+        }
+
+        currentMove = null;
+        currentQuestion = null;
+        setCommandButtonsDisabled(false);
+        disableAnswerInput('Choose your next command...');
+        gmSay('Choose your next move: <strong>Attack</strong> for safety, or <strong>Special Attack</strong> for greater damage.', false);
+      });
+    });
+  }, 1100);
 }
 
 function handleKey(e)   { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } }
