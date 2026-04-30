@@ -257,6 +257,60 @@ body {
 }
 .dlg-row { margin-top: 16px; display: flex; justify-content: flex-end; }
 
+/* ─── BOSS TEASER / CINEMATIC STORY UI ───────── */
+.dlg-box.boss-tease {
+  width: min(760px, 92vw);
+  bottom: 34px;
+  background:
+    linear-gradient(180deg, rgba(15, 5, 28, 0.92), rgba(4, 4, 14, 0.94)),
+    rgba(4,4,14,0.92);
+  border: 1px solid rgba(167,139,250,0.34);
+  border-top: 1px solid rgba(250,204,21,0.28);
+  border-radius: 8px 8px 22px 22px;
+  box-shadow:
+    0 0 42px rgba(124,58,237,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 16px 60px rgba(0,0,0,0.72);
+}
+
+.dlg-box.boss-tease::before {
+  content: '✦';
+  position: absolute;
+  top: -17px; left: 50%;
+  transform: translateX(-50%);
+  width: 42px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  color: #facc15;
+  background: rgba(4,4,14,0.95);
+  border: 1px solid rgba(250,204,21,0.28);
+  border-radius: 999px;
+  text-shadow: 0 0 16px rgba(250,204,21,0.7);
+}
+
+.dlg-box.boss-tease .dlg-speaker {
+  color: #facc15;
+  text-shadow: 0 0 18px rgba(250,204,21,0.38);
+}
+
+.dlg-box.boss-tease .dlg-text {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1rem, 2vw, 1.22rem);
+  letter-spacing: 0.02em;
+  color: #f5f3ff;
+  text-shadow: 0 2px 18px rgba(0,0,0,0.9);
+}
+
+.scene-wrap.cinematic-mode .scene-cover {
+  background:
+    radial-gradient(ellipse at center, rgba(124,58,237,0.05), transparent 42%),
+    linear-gradient(to bottom, rgba(0,0,0,0.32) 0%, transparent 34%, rgba(0,0,0,0.88) 100%);
+}
+
+.scene-wrap.cinematic-playing .scene-cover {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.12), rgba(0,0,0,0.18));
+}
+
+
 /* ─── SHARED BTN ─────────────────────────────── */
 .btn {
   padding: 11px 26px; border-radius: 12px; border: none;
@@ -325,7 +379,7 @@ body {
 /* Arena background */
 .boss-arena-bg {
   position: absolute; inset: 0; z-index: 0;
-  background: url('Arena.png') center/cover no-repeat;
+  background: url('Boss/newArena.png') center/cover no-repeat;
 }
 .boss-arena-bg::after {
   content: '';
@@ -399,14 +453,14 @@ body {
 /* Boss image */
 .boss-img-container {
   position: relative;
-  width: 150px; height: 150px;
+  width: 220px; height: 220px;
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 10px;
 }
 
 /* Idle float animation on boss */
 .boss-img {
-  width: 150px; height: 150px;
+  width: 220px; height: 220px;
   object-fit: contain;
   filter: drop-shadow(0 0 28px rgba(124,58,237,0.7)) drop-shadow(0 0 8px rgba(239,68,68,0.3));
   animation: bossFloat 3s ease-in-out infinite;
@@ -955,14 +1009,14 @@ body {
         <!-- Damage number -->
         <div class="dmg-num" id="dmgNum">⚔️ -50</div>
 
-        <!-- Boss image (kept for layout, hidden visually) -->
-        <img src="" id="bossImg" class="boss-img" alt="Boss: Risky Thinking" style="opacity:0;" />
+        <!-- Boss image -->
+        <img src="Boss/otherboss.png" id="bossImg" class="boss-img" alt="Boss: The Crowned Hunter" />
       </div>
 
       <!-- HP Zone -->
       <div class="boss-hp-zone">
         <div class="boss-hp-header">
-          <span class="boss-hp-name">💀 Risky Thinking</span>
+          <span class="boss-hp-name">💀 The Crowned Hunter</span>
           <span class="boss-hp-val" id="bossHpVal">100 / 100 HP</span>
         </div>
         <div class="boss-hp-track-wrap">
@@ -1075,6 +1129,12 @@ const VIDS = {
   Protection:'protection.png',
   Babescall: 'Babescall.png',
   guycall: 'Guycall.png',
+
+  // Boss cinematic assets
+  bossArena: 'Boss/newArena.png',
+  bossArenaVid: 'Boss/arenavid.mp4',
+  bossEntrance: 'Boss/boss_entrance.mp4',
+
   ph: ''
 };
 
@@ -1122,7 +1182,7 @@ const CHAPTERS = {
       { type:'scenes', key:'intro' },
       { type:'mcq', i:0 },
       { type:'path', mi:0 },
-      { type:'boss' }
+      { type:'bossIntro' }
     ]
   },
 
@@ -1174,7 +1234,7 @@ const CHAPTERS = {
       { type:'scenes', key:'intro' },
       { type:'mcq', i:0 },
       { type:'path', mi:0 },
-      { type:'boss' }
+      { type:'bossIntro' }
     ]
   },
 
@@ -1249,7 +1309,7 @@ const CHAPTERS = {
       { type:'path', mi:0 },
       { type:'mcq', i:1 },
       { type:'path', mi:1 },
-      { type:'boss' }
+      { type:'bossIntro' }
     ]
   },
 
@@ -1321,7 +1381,7 @@ const CHAPTERS = {
       { type:'path', mi:0 },
       { type:'mcq', i:1 },
       { type:'path', mi:1 },
-      { type:'boss' }
+      { type:'bossIntro' }
     ]
   },
 };
@@ -1384,6 +1444,9 @@ function runFlow() {
     switchScreen('story');
     renderScene();
 
+  } else if (step.type === 'bossIntro') {
+    startBossIntro();
+
   } else if (step.type === 'boss') {
     switchScreen('boss');
     initBoss();
@@ -1412,12 +1475,14 @@ function setVid(key) {
   lastVidSrc = src;
 
   if (!src) {
+    vid.pause();
     vid.src = '';
     vid.classList.remove('vis');
     return;
   }
 
   if (src.endsWith('.png') || src.endsWith('.jpg') || src.endsWith('.jpeg')) {
+    vid.pause();
     vid.style.display = 'none';
     let img = document.getElementById('sceneImg');
     if (!img) {
@@ -1433,10 +1498,15 @@ function setVid(key) {
     img.src = src;
     img.style.display = 'block';
   } else {
+    // Normal story videos stay muted/looping so browser autoplay works.
     vid.style.display = 'block';
     const img = document.getElementById('sceneImg');
     if (img) img.style.display = 'none';
     vid.src = src;
+    vid.muted = true;
+    vid.setAttribute('muted', '');
+    vid.loop = true;
+    vid.controls = false;
     vid.classList.remove('vis');
     vid.load();
     vid.play().then(() => vid.classList.add('vis')).catch(() => {});
@@ -1445,15 +1515,23 @@ function setVid(key) {
 
 function renderScene() {
   if (scenePos >= scenes.length) { advFlow(); return; }
+
+  // Restore normal story mode in case we previously used the boss teaser.
+  document.querySelector('.dlg-box').style.display = '';
+  document.querySelector('.dlg-box').classList.remove('boss-tease');
+  document.querySelector('.scene-wrap').classList.remove('cinematic-mode', 'cinematic-playing');
+
   const s = scenes[scenePos];
   document.getElementById('dlgSpeaker').textContent = s.sp.toUpperCase();
   typeText(document.getElementById('dlgText'), s.tx);
   setVid(s.v);
   const btn = document.getElementById('storyBtn');
+  btn.disabled = false;
+  btn.onclick = advanceScene;
   if (scenePos === scenes.length - 1) {
     const ch   = CHAPTERS[chapId];
     const next = ch.flow[flowPos + 1];
-    if (!next || next.type === 'boss')    btn.textContent = 'Face the Boss →';
+    if (!next || next.type === 'bossIntro' || next.type === 'boss') btn.textContent = 'Face the Boss →';
     else if (next.type === 'mcq')         btn.textContent = 'Make Your Choice →';
     else                                  btn.textContent = 'Continue →';
   } else {
@@ -1462,6 +1540,116 @@ function renderScene() {
 }
 
 function advanceScene() { scenePos++; renderScene(); }
+
+
+/* ════════════════════════════════════════
+   BOSS INTRO CINEMATIC
+════════════════════════════════════════ */
+function startBossIntro() {
+  switchScreen('story');
+
+  const dlgBox = document.querySelector('.dlg-box');
+  const sceneWrap = document.querySelector('.scene-wrap');
+  const btn = document.getElementById('storyBtn');
+
+  dlgBox.style.display = '';
+  dlgBox.classList.add('boss-tease');
+  sceneWrap.classList.add('cinematic-mode');
+  sceneWrap.classList.remove('cinematic-playing');
+
+  document.getElementById('storyPill').textContent = '⚠️ Final Trial · Boss Awakened';
+  document.getElementById('dlgSpeaker').textContent = 'THE ARENA WHISPERS';
+  typeText(
+    document.getElementById('dlgText'),
+    'In life, unexpected challenges can appear without warning. Prove that you can overcome them, and be rewarded with growth.',
+    18
+  );
+
+  btn.disabled = false;
+  btn.textContent = 'Enter the Arena →';
+  btn.onclick = playBossArenaVideo;
+
+  setVid('bossArena');
+}
+
+function playBossArenaVideo() {
+  const btn = document.getElementById('storyBtn');
+  btn.disabled = true;
+
+  document.querySelector('.dlg-box').style.display = 'none';
+  document.querySelector('.scene-wrap').classList.add('cinematic-playing');
+
+  playFullScreenBossVideo('bossArenaVid', () => {
+    playFullScreenBossVideo('bossEntrance', finishBossIntro);
+  });
+}
+
+function playFullScreenBossVideo(key, onEnded) {
+  const src = VIDS[key];
+  const vid = document.getElementById('mainVid');
+  const img = document.getElementById('sceneImg');
+
+  if (!src) {
+    console.warn('Missing video source for:', key);
+    onEnded();
+    return;
+  }
+
+  if (img) img.style.display = 'none';
+
+  vid.pause();
+  vid.onended = null;
+  vid.style.display = 'block';
+  vid.classList.remove('vis');
+  vid.src = src;
+
+  // Boss cinematic videos should have audio.
+  // This starts after the user's Continue click, so browsers usually allow sound.
+  vid.muted = false;
+  vid.removeAttribute('muted');
+  vid.loop = false;
+  vid.controls = false;
+  vid.playsInline = true;
+
+  vid.load();
+  vid.onended = () => {
+    vid.onended = null;
+    onEnded();
+  };
+
+  vid.play()
+    .then(() => vid.classList.add('vis'))
+    .catch(err => {
+      console.warn('Video autoplay with audio was blocked:', err);
+
+      // Fallback button if browser blocks audio/video start.
+      const dlgBox = document.querySelector('.dlg-box');
+      const btn = document.getElementById('storyBtn');
+
+      dlgBox.style.display = '';
+      dlgBox.classList.add('boss-tease');
+      document.getElementById('dlgSpeaker').textContent = 'THE VISION WAITS';
+      document.getElementById('dlgText').textContent = 'Click continue to proceed.';
+      btn.disabled = false;
+      btn.textContent = 'Continue →';
+      btn.onclick = onEnded;
+    });
+}
+
+function finishBossIntro() {
+  const vid = document.getElementById('mainVid');
+  vid.pause();
+  vid.onended = null;
+
+  document.querySelector('.dlg-box').style.display = '';
+  document.querySelector('.dlg-box').classList.remove('boss-tease');
+  document.querySelector('.scene-wrap').classList.remove('cinematic-mode', 'cinematic-playing');
+
+  lastVidSrc = null;
+  switchScreen('boss');
+  initBoss();
+}
+
 
 /* ════════════════════════════════════════
    MCQ
@@ -1568,6 +1756,8 @@ function initBoss() {
 
   /* Reset boss visuals */
   const bImg = document.getElementById('bossImg');
+  bImg.src = 'Boss/otherboss.png';
+  bImg.style.opacity = '1';
   bImg.classList.remove('hit','dead');
   bImg.style.animation = '';
   setTimeout(() => { bImg.style.animation = ''; }, 10);
