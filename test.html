@@ -372,6 +372,143 @@ body {
   background-repeat: no-repeat;
 }
 
+/* ─── DECISION POINT SIDE PANEL ───────────────── */
+#mcq.side-active.active {
+  align-items: center;
+  justify-content: flex-start;
+  padding: clamp(18px, 3vw, 44px);
+}
+#mcq.side-active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.68) 0%, rgba(0,0,0,0.35) 35%, rgba(0,0,0,0.08) 70%),
+    radial-gradient(ellipse at 21% 50%, rgba(14,12,22,0.55), transparent 45%);
+}
+#mcq.side-active .mcq-wrap {
+  position: relative;
+  z-index: 2;
+  width: min(540px, 38vw);
+  margin-left: 0;
+  max-height: calc(100vh - 70px);
+  border-radius: 4px;
+  padding: 46px 28px 28px;
+  background:
+    linear-gradient(180deg, rgba(9,14,22,0.94), rgba(5,9,16,0.96));
+  border: 2px solid rgba(185,137,67,0.78);
+  box-shadow:
+    0 0 0 1px rgba(244,201,123,0.14) inset,
+    0 18px 60px rgba(0,0,0,0.72);
+}
+#mcq.side-active .mcq-wrap::before {
+  content: 'Decision Point 1';
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(310px, 70%);
+  padding: 10px 18px;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f6c77d;
+  background: linear-gradient(180deg, rgba(12,17,25,0.98), rgba(6,9,15,0.98));
+  border: 2px solid rgba(185,137,67,0.78);
+  border-radius: 8px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.65);
+}
+#mcq.side-active .mcq-label {
+  font-family: 'Cinzel', serif;
+  font-size: 1.02rem;
+  line-height: 1.45;
+  color: #f6c77d;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  margin-bottom: 20px;
+}
+#mcq.side-active .mcq-q {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1rem, 1.55vw, 1.35rem);
+  font-weight: 600;
+  line-height: 1.45;
+  color: rgba(245,238,224,0.9);
+  margin-bottom: 24px;
+}
+#mcq.side-active .mcq-choices { gap: 12px; }
+#mcq.side-active .choice-btn {
+  position: relative;
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 14px;
+  align-items: center;
+  min-height: 94px;
+  padding: 14px 18px 14px 12px;
+  border-radius: 5px;
+  white-space: normal;
+  background: linear-gradient(180deg, rgba(48,15,15,0.85), rgba(30,10,10,0.92));
+  border: 1px solid rgba(190,70,51,0.72);
+  color: #f4d4c8;
+  box-shadow: inset 0 0 18px rgba(0,0,0,0.35);
+}
+#mcq.side-active .choice-btn::before {
+  content: '✕';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.35rem;
+  font-weight: 800;
+  color: #ff6b62;
+  line-height: 1;
+}
+#mcq.side-active .choice-btn.correct {
+  background: linear-gradient(180deg, rgba(16,54,31,0.84), rgba(8,33,20,0.94));
+  border-color: rgba(104,180,78,0.78);
+  color: #dff5d1;
+}
+#mcq.side-active .choice-btn.correct::before {
+  content: '✓';
+  color: #94d06f;
+}
+#mcq.side-active .choice-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(246,199,125,0.88);
+  box-shadow: 0 0 18px rgba(246,199,125,0.14), inset 0 0 18px rgba(0,0,0,0.35);
+}
+#mcq.side-active .choice-btn.selected {
+  outline: 2px solid rgba(246,199,125,0.8);
+  outline-offset: 2px;
+}
+#mcq.side-active .choice-title {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ff8177;
+  margin-bottom: 4px;
+}
+#mcq.side-active .choice-btn.correct .choice-title { color: #afe28d; }
+#mcq.side-active .choice-desc {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  color: rgba(245,238,224,0.86);
+}
+#mcq.side-active .mcq-fb {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  margin-top: 14px;
+}
+#mcq.side-active .mcq-continue { text-align: right; }
+
+@media (max-width: 900px) {
+  #mcq.side-active.active { justify-content: center; }
+  #mcq.side-active .mcq-wrap { width: min(540px, 92vw); }
+}
+
 /* ═══════════════════════════════════════════════
    BOSS BATTLE — FULLSCREEN CINEMATIC RPG UI
 ═══════════════════════════════════════════════ */
@@ -1126,16 +1263,16 @@ body {
 ════════════════════════════════════════ */
 
 const VIDS = {
-  scene1: 'scene1.mp4',
-  scene2: 'scene2.mp4',
-  ch2scene1: 'Ch2scene1.mp4',
-  ch2MaleDecision: 'ch2maledecision.png',
-  ch2FemaleDecision: 'ch2femaledecision.png',
-  pregnancy: 'pregnancy.png',
-  Babes: 'Babes.png',
-  Protection:'protection.png',
-  Babescall: 'Babescall.png',
-  guycall: 'Guycall.png',
+
+  // Chapter 1 fantasy consent assets
+  ch1FantasyWorld: 'chapter1/scene/world_intro.mp4',
+  ch1CorruptedWorld: 'chapter1/picture/corrupted_world.png',
+  ch1LumaIntro: 'chapter1/scene/luma_intro.mp4',
+  ch1Home: 'chapter1/picture/Home.png',
+  ch1Festival: 'chapter1/picture/festival.png',
+  ch1Bridge: 'chapter1/picture/bridge.png',
+  ch1CorruptedBridge: 'chapter1/picture/corrupted_bridge.png',
+  GameMaster: 'chapter1/voice/Game_Master/gmvoice1.mp3',
 
   // Boss cinematic assets
   bossArena: 'Boss/newArena.png',
@@ -1150,46 +1287,109 @@ const CHAPTERS = {
   /* ─── CH1 FEMALE ─── */
   ch1_female: {
     label: 'Chapter 1 · Consent',
-    intro: [
-      { sp:'Game Master', tx:'After your CCA event, people stay behind to hang out. You\'ve been getting closer with someone from the group…', v:'scene1' },
-      { sp:'Guy',         tx:'Hey, you did great today. Want to chill for a bit?', v:'scene1' },
-      { sp:'You',         tx:'Yeah, just for a while.', v:'scene1' },
-      { sp:'Guy',         tx:'It\'s kinda loud here… want to go somewhere quieter?', v:'scene1' },
-      { sp:'Game Master', tx:'You arrive at a quieter, more isolated spot. The atmosphere shifts.', v:'scene2' },
-      { sp:'Guy',         tx:'Relax… it\'s just us.', v:'scene2' },
-      { sp:'You',         tx:'I don\'t really feel comfortable with this…', v:'scene2' },
-      { sp:'Guy',         tx:'Come on… don\'t make it weird. It\'s fine.', v:'scene2' },
-    ],
+ intro: [
+  //gmvoice1
+  { sp: 'Game Master', tx: 'The world of Elarion once shone beneath twin moons. Rivers of light flowed through crystal cities, lanterns drifted through the sky, and the world felt safe, peaceful, and full of trust.', v: 'ch1FantasyWorld', v: 'GameMaster' },
+  //gmvoice2
+  { sp: 'Game Master', tx: 'At the heart of this world was the first seal, known as The First Boundary. It protected every person’s right to choose what happens to them.', v: 'ch1FantasyWorld' },
+  { sp: 'You', tx: 'This place feels... safe.', v: 'ch1FantasyWorld' },
+
+  { sp: 'Game Master', tx: 'Then the vision begins to change. The light fades, the air becomes heavy, and the sky cracks as black thorns spread through the garden paths.', v: 'ch1CorruptedWorld' },
+  { sp: 'Game Master', tx: 'This is more than a nightmare. It is a physical manifestation of what happens when boundaries are not respected.', v: 'ch1CorruptedWorld' },
+  { sp: 'You', tx: 'What... happened?', v: 'ch1CorruptedWorld' },
+  { sp: 'Boundary Breaker', tx: 'Fear makes voices quiet.', v: 'ch1CorruptedWorld' },
+  { sp: 'You', tx: 'Who are you?', v: 'ch1CorruptedWorld' },
+  { sp: 'Boundary Breaker', tx: 'When they hesitate, I step closer. When they freeze, I call it permission. When they stay silent, I claim victory.', v: 'ch1CorruptedWorld' },
+  { sp: 'Game Master', tx: 'The more boundaries are broken, the stronger the corruption becomes. If someone ignores their own discomfort, they could be placed in danger.', v: 'ch1CorruptedWorld' },
+  { sp: 'You', tx: 'No... that’s wrong.', v: 'ch1CorruptedWorld' },
+  { sp: 'Boundary Breaker', tx: 'Then prove it.', v: 'ch1CorruptedWorld' },
+
+  { sp: 'You', tx: 'Ah—!', v: 'ch1LumaIntro' },
+  { sp: 'Game Master', tx: 'The vision fades. You wake with a gasp as Luma hovers nearby, as if it has been waiting for you.', v: 'ch1LumaIntro' },
+
+  { sp: 'You', tx: 'It wasn’t just a dream... it felt real.', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'You saw two versions of the same world. One was safe because people respected each other. The other was corrupted by choices that hurt people.', v: 'ch1Home' },
+  { sp: 'You', tx: 'Luma... what was that thing?', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'The shadow you saw is called The Boundary Breaker. It is born when people’s boundaries are ignored.', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'It feeds on pressure, fear, silence, and moments where someone feels unable to say no.', v: 'ch1Home' },
+  { sp: 'You', tx: 'So the corruption came from people crossing boundaries?', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'Yes. Every time someone ignores another person’s comfort, choice, or safety, the corruption grows stronger.', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'That is why you must learn to notice warning signs early. Discomfort is not something you should push away just to keep someone else happy.', v: 'ch1Home' },
+  { sp: 'You', tx: 'But why would someone stay silent if they were uncomfortable?', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'Because saying no is not always easy. Some freeze. Some fear anger. Some worry things will become awkward. Some do not want to disappoint someone they care about.', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'When someone makes you feel pressured, guilty, trapped, or afraid to say no, that is not care. That is a boundary being tested.', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'Remember this: silence is not consent. Consent must be clear, willing, and freely given.', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'I was sent by BABES, an organisation that supports pregnant teenagers and helps young people make safer, informed decisions.', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'My role is to guide your journey, not by choosing for you, but by helping you think clearly when things feel confusing, awkward, or scary.', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'By the end of this journey, you will learn how to protect your boundaries, respect others, and make decisions that keep you safe.', v: 'ch1Home' },
+  { sp: 'Luma', tx: 'So remember this: you do not need to stay somewhere, agree to something, or silence yourself just to avoid upsetting someone else.', v: 'ch1Home' },
+
+  { sp: 'Game Master', tx: 'Later that night, you arrive at the Moonlit Festival. Lanterns glow, music plays, and the crowd feels alive.', v: 'ch1Festival' },
+  { sp: 'Luma', tx: 'The festival should be a place of joy. But corruption often hides inside ordinary moments.', v: 'ch1Festival' },
+  { sp: 'Kael', tx: 'There you are. I’ve been looking for you.', v: 'ch1Festival' },
+  { sp: 'You', tx: 'Kael... you scared me a little.', v: 'ch1Festival' },
+  { sp: 'Kael', tx: 'Then let me make it up to you. Come on, let’s go somewhere quieter.', v: 'ch1Festival' },
+  { sp: 'You', tx: 'We can talk here.', v: 'ch1Festival' },
+  { sp: 'Kael', tx: 'Here? With everyone around? There’s a moon bridge behind the garden. It’s quieter there.', v: 'ch1Festival' },
+  { sp: 'You', tx: 'The moon bridge? Isn’t that far from the festival?', v: 'ch1Festival' },
+  { sp: 'Kael', tx: 'Not far. Don’t worry so much. We have been dating for six months, right? You trust me.', v: 'ch1Festival' },
+  { sp: 'Luma', tx: 'Your heart is hesitating. Notice that feeling.', v: 'ch1Festival' },
+
+  { sp: 'Game Master', tx: 'You follow Kael along the moonlit path until the music fades behind you.', v: 'ch1Bridge' },
+  { sp: 'You', tx: 'It’s really quiet here.', v: 'ch1Bridge' },
+  { sp: 'Kael', tx: 'That’s the point. Finally, it’s just us.', v: 'ch1Bridge' },
+  { sp: 'You', tx: 'Maybe we shouldn’t stay too long.', v: 'ch1Bridge' },
+  { sp: 'Kael', tx: 'You worry too much.', v: 'ch1Bridge' },
+  { sp: 'You', tx: 'I just feel a little uncomfortable being this far from everyone.', v: 'ch1Bridge' },
+  { sp: 'Kael', tx: 'Uncomfortable? With me?', v: 'ch1Bridge' },
+  { sp: 'You', tx: 'That’s not what I mean...', v: 'ch1Bridge' },
+  { sp: 'Kael', tx: 'Then what do you mean? We’ve been together for six months.', v: 'ch1Bridge' },
+
+  { sp: 'Game Master', tx: 'The air turns heavy. The bridge darkens, and thin black vines creep along the rails.', v: 'ch1CorruptedBridge' },
+  { sp: 'You', tx: 'Kael... I don’t think I’m comfortable with this.', v: 'ch1CorruptedBridge' },
+  { sp: 'Kael', tx: 'Don’t make it sound so serious. You came here with me.', v: 'ch1CorruptedBridge' },
+  { sp: 'You', tx: 'I know, but—', v: 'ch1CorruptedBridge' },
+  { sp: 'Kael', tx: 'But what? We’re together. Do you not trust me?', v: 'ch1CorruptedBridge' },
+  { sp: 'Game Master', tx: 'Your chest tightens. Part of you wants to leave, but another part fears hurting him and making everything awkward.', v: 'ch1CorruptedBridge' },
+  { sp: 'Luma', tx: 'Pressure is not consent. You do not have to protect his feelings by ignoring your own.', v: 'ch1CorruptedBridge' },
+  { sp: 'Boundary Breaker', tx: 'If you cannot say no... let him decide.', v: 'ch1CorruptedBridge' },
+  { sp: 'You', tx: 'I...', v: 'ch1CorruptedBridge' },
+],
     mcqs: [
       {
-        label:'⚔️ Decision Point',
-        q:'What should you do in this situation?',
+        label:'⚔️ Decision Point: The First Boundary',
+        bg:'chapter1/picture/corrupted_bridge.png',
+        side:true,
+        q:'Kael has brought you somewhere isolated. You feel uncomfortable, but you are afraid of upsetting him and making things awkward. What should you do?',
         opts:[
-          { tx:'😬  Go along to avoid awkwardness',     pk:'risky',   fb:'⚠️ Going along when you\'re uncomfortable blurs boundaries and puts you at real risk.' },
-          { tx:'✋  Clearly say NO and leave',           pk:'safe',    fb:'✅ Strong choice. Setting a clear boundary protects you and sends an unmistakable message.' },
-          { tx:'😶  Stay quiet and avoid responding',   pk:'passive', fb:'⚠️ Silence can be misread as agreement. Consent must always be clear and active.' },
+          {
+            title:'Option A — Wrong',
+            desc:'Go along because you already followed him here.',
+            tone:'wrong',
+            pk:'go_along',
+            fb:'⚠️ Being there already does not mean you have to continue. You can change your mind at any point.'
+          },
+          {
+            title:'Option B — Wrong',
+            desc:'Stay silent and hope he understands.',
+            tone:'wrong',
+            pk:'stay_silent',
+            fb:'⚠️ Silence can be misunderstood. If you feel unsafe or uncomfortable, make your boundary clear and leave.'
+          },
+          {
+            title:'Option C — Correct',
+            desc:'Clearly say you are uncomfortable and return to the festival.',
+            tone:'correct',
+            pk:'leave',
+            fb:'✅ Correct. You are allowed to say you are uncomfortable, leave the isolated place, and return to a safer public area.'
+          },
         ]
       }
     ],
-    paths: {
-      mcq0_safe:[
-        { sp:'You',         tx:'No. I\'m not comfortable with this. I\'m leaving.', v:'scene2' },
-        { sp:'Game Master', tx:'Setting boundaries is a sign of strength — not weakness. You acted with real courage and protected yourself.', v:'ph' },
-      ],
-      mcq0_risky:[
-        { sp:'Game Master', tx:'You go along, even though something feels deeply off inside.', v:'scene2' },
-        { sp:'Game Master', tx:'What happened is not your fault. Support is always available — reach out to a trusted adult or helpline.', v:'ph' },
-      ],
-      mcq0_passive:[
-        { sp:'Game Master', tx:'You stay silent, hoping the situation resolves itself on its own.', v:'scene2' },
-        { sp:'Game Master', tx:'Silence can be misread as consent. Even a quiet "I\'m not okay with this" makes all the difference.', v:'ph' },
-      ],
-    },
+    paths: {},
     flow:[
       { type:'scenes', key:'intro' },
-      { type:'mcq', i:0 },
-      { type:'path', mi:0 },
-      { type:'bossIntro' }
+      { type:'mcq', i:0 }
     ]
   },
 
@@ -1510,7 +1710,7 @@ function setVid(key) {
     const img = document.getElementById('sceneImg');
     if (img) img.style.display = 'none';
     vid.src = src;
-    vid.muted = true;
+    vid.muted = false;
     vid.setAttribute('muted', '');
     vid.loop = true;
     vid.controls = false;
@@ -1673,6 +1873,7 @@ function renderMCQ(idx) {
   document.getElementById('mcqCont').style.display = 'none';
 
   const mcqScreen = document.getElementById('mcq');
+  mcqScreen.classList.toggle('side-active', !!mcq.side);
   if (mcq.bg) {
     mcqScreen.style.backgroundImage = `url(${mcq.bg})`;
   } else {
@@ -1683,8 +1884,18 @@ function renderMCQ(idx) {
   div.innerHTML = '';
   mcq.opts.forEach(opt => {
     const b = document.createElement('button');
-    b.className = 'choice-btn';
-    b.textContent = opt.tx;
+    b.className = `choice-btn${opt.tone ? ' ' + opt.tone : ''}`;
+
+    if (opt.title || opt.desc) {
+      b.innerHTML = `
+        <span>
+          <span class="choice-title">${esc(opt.title || '')}</span>
+          <span class="choice-desc">${esc(opt.desc || opt.tx || '')}</span>
+        </span>`;
+    } else {
+      b.textContent = opt.tx;
+    }
+
     b.onclick = () => pickChoice(idx, opt.pk, opt.fb, b);
     div.appendChild(b);
   });
