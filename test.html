@@ -1272,7 +1272,6 @@ const VIDS = {
   ch1Festival: 'chapter1/picture/festival.png',
   ch1Bridge: 'chapter1/picture/bridge.png',
   ch1CorruptedBridge: 'chapter1/picture/corrupted_bridge.png',
-  GameMaster: 'chapter1/voice/Game_Master/gmvoice1.mp3',
 
   // Boss cinematic assets
   bossArena: 'Boss/newArena.png',
@@ -1282,78 +1281,252 @@ const VIDS = {
   ph: ''
 };
 
+const VOICES = {
+  // Game Master 01
+  Game_Master_01: 'chapter1/voice/Game_Master/gmvoice1.mp3',
+  // Game Master 02
+  Game_Master_02: 'chapter1/voice/Game_Master/Game_Master_02.mp3',
+  // You 01
+  You_01: 'chapter1/voice/You/You_01.mp3',
+  // Game Master 03
+  Game_Master_03: 'chapter1/voice/Game_Master/Game_Master_03.mp3',
+  // Game Master 04
+  Game_Master_04: 'chapter1/voice/Game_Master/Game_Master_04.mp3',
+  // You 02
+  You_02: 'chapter1/voice/You/You_02.mp3',
+  // Boundary Breaker 01
+  Boundary_Breaker_01: 'chapter1/voice/Boundary_Breaker/Boundary_Breaker_01.mp3',
+  // You 03
+  You_03: 'chapter1/voice/You/You_03.mp3',
+  // Boundary Breaker 02
+  Boundary_Breaker_02: 'chapter1/voice/Boundary_Breaker/Boundary_Breaker_02.mp3',
+  // Game Master 05
+  Game_Master_05: 'chapter1/voice/Game_Master/Game_Master_05.mp3',
+  // You 04
+  You_04: 'chapter1/voice/You/You_04.mp3',
+  // Boundary Breaker 03
+  Boundary_Breaker_03: 'chapter1/voice/Boundary_Breaker/Boundary_Breaker_03.mp3',
+  // You 05
+  You_05: 'chapter1/voice/You/You_05.mp3',
+  // Game Master 06
+  Game_Master_06: 'chapter1/voice/Game_Master/Game_Master_06.mp3',
+  // You 06
+  You_06: 'chapter1/voice/You/You_06.mp3',
+  // Luma 01
+  Luma_01: 'chapter1/voice/Luma/Luma_01.mp3',
+  // You 07
+  You_07: 'chapter1/voice/You/You_07.mp3',
+  // Luma 02
+  Luma_02: 'chapter1/voice/Luma/Luma_02.mp3',
+  // Luma 03
+  Luma_03: 'chapter1/voice/Luma/Luma_03.mp3',
+  // You 08
+  You_08: 'chapter1/voice/You/You_08.mp3',
+  // Luma 04
+  Luma_04: 'chapter1/voice/Luma/Luma_04.mp3',
+  // Luma 05
+  Luma_05: 'chapter1/voice/Luma/Luma_05.mp3',
+  // You 09
+  You_09: 'chapter1/voice/You/You_09.mp3',
+  // Luma 06
+  Luma_06: 'chapter1/voice/Luma/Luma_06.mp3',
+  // Luma 07
+  Luma_07: 'chapter1/voice/Luma/Luma_07.mp3',
+  // Luma 08
+  Luma_08: 'chapter1/voice/Luma/Luma_08.mp3',
+  // Luma 09
+  Luma_09: 'chapter1/voice/Luma/Luma_09.mp3',
+  // Luma 10
+  Luma_10: 'chapter1/voice/Luma/Luma_10.mp3',
+  // Luma 11
+  Luma_11: 'chapter1/voice/Luma/Luma_11.mp3',
+  // Luma 12
+  Luma_12: 'chapter1/voice/Luma/Luma_12.mp3',
+  // Game Master 07
+  Game_Master_07: 'chapter1/voice/Game_Master/Game_Master_07.mp3',
+  // Luma 13
+  Luma_13: 'chapter1/voice/Luma/Luma_13.mp3',
+  // Kael 01
+  Kael_01: 'chapter1/voice/Kael/Kael_01.mp3',
+  // You 10
+  You_10: 'chapter1/voice/You/You_10.mp3',
+  // Kael 02
+  Kael_02: 'chapter1/voice/Kael/Kael_02.mp3',
+  // You 11
+  You_11: 'chapter1/voice/You/You_11.mp3',
+  // Kael 03
+  Kael_03: 'chapter1/voice/Kael/Kael_03.mp3',
+  // You 12
+  You_12: 'chapter1/voice/You/You_12.mp3',
+  // Kael 04
+  Kael_04: 'chapter1/voice/Kael/Kael_04.mp3',
+  // Luma 14
+  Luma_14: 'chapter1/voice/Luma/Luma_14.mp3',
+  // Game Master 08
+  Game_Master_08: 'chapter1/voice/Game_Master/Game_Master_08.mp3',
+  // You 13
+  You_13: 'chapter1/voice/You/You_13.mp3',
+  // Kael 05
+  Kael_05: 'chapter1/voice/Kael/Kael_05.mp3',
+  // You 14
+  You_14: 'chapter1/voice/You/You_14.mp3',
+  // Kael 06
+  Kael_06: 'chapter1/voice/Kael/Kael_06.mp3',
+  // You 15
+  You_15: 'chapter1/voice/You/You_15.mp3',
+  // Kael 07
+  Kael_07: 'chapter1/voice/Kael/Kael_07.mp3',
+  // You 16
+  You_16: 'chapter1/voice/You/You_16.mp3',
+  // Kael 08
+  Kael_08: 'chapter1/voice/Kael/Kael_08.mp3',
+  // Game Master 09
+  Game_Master_09: 'chapter1/voice/Game_Master/Game_Master_09.mp3',
+  // You 17
+  You_17: 'chapter1/voice/You/You_17.mp3',
+  // Kael 09
+  Kael_09: 'chapter1/voice/Kael/Kael_09.mp3',
+  // You 18
+  You_18: 'chapter1/voice/You/You_18.mp3',
+  // Kael 10
+  Kael_10: 'chapter1/voice/Kael/Kael_10.mp3',
+  // Game Master 10
+  Game_Master_10: 'chapter1/voice/Game_Master/Game_Master_10.mp3',
+  // Luma 15
+  Luma_15: 'chapter1/voice/Luma/Luma_15.mp3',
+  // Boundary Breaker 04
+  Boundary_Breaker_04: 'chapter1/voice/Boundary_Breaker/Boundary_Breaker_04.mp3',
+  // You 19
+  You_19: 'chapter1/voice/You/You_19.mp3',
+};
 const CHAPTERS = {
 
   /* ─── CH1 FEMALE ─── */
   ch1_female: {
     label: 'Chapter 1 · Consent',
  intro: [
-  //gmvoice1
-  { sp: 'Game Master', tx: 'The world of Elarion once shone beneath twin moons. Rivers of light flowed through crystal cities, lanterns drifted through the sky, and the world felt safe, peaceful, and full of trust.', v: 'ch1FantasyWorld', v: 'GameMaster' },
-  //gmvoice2
-  { sp: 'Game Master', tx: 'At the heart of this world was the first seal, known as The First Boundary. It protected every person’s right to choose what happens to them.', v: 'ch1FantasyWorld' },
-  { sp: 'You', tx: 'This place feels... safe.', v: 'ch1FantasyWorld' },
+  // Voice: Game Master 01
+  { sp: 'Game Master', tx: 'The world of Elarion once shone beneath twin moons. Rivers of light flowed through crystal cities, lanterns drifted through the sky, and the world felt safe, peaceful, and full of trust.', v: 'ch1FantasyWorld', voice: 'Game_Master_01' },
+  // Voice: Game Master 02
+  { sp: 'Game Master', tx: 'At the heart of this world was the first seal, known as The First Boundary. It protected every person’s right to choose what happens to them.', v: 'ch1FantasyWorld', voice: 'Game_Master_02' },
+  // Voice: You 01
+  { sp: 'You', tx: 'This place feels... safe.', v: 'ch1FantasyWorld', voice: 'You_01' },
 
-  { sp: 'Game Master', tx: 'Then the vision begins to change. The light fades, the air becomes heavy, and the sky cracks as black thorns spread through the garden paths.', v: 'ch1CorruptedWorld' },
-  { sp: 'Game Master', tx: 'This is more than a nightmare. It is a physical manifestation of what happens when boundaries are not respected.', v: 'ch1CorruptedWorld' },
-  { sp: 'You', tx: 'What... happened?', v: 'ch1CorruptedWorld' },
-  { sp: 'Boundary Breaker', tx: 'Fear makes voices quiet.', v: 'ch1CorruptedWorld' },
-  { sp: 'You', tx: 'Who are you?', v: 'ch1CorruptedWorld' },
-  { sp: 'Boundary Breaker', tx: 'When they hesitate, I step closer. When they freeze, I call it permission. When they stay silent, I claim victory.', v: 'ch1CorruptedWorld' },
-  { sp: 'Game Master', tx: 'The more boundaries are broken, the stronger the corruption becomes. If someone ignores their own discomfort, they could be placed in danger.', v: 'ch1CorruptedWorld' },
-  { sp: 'You', tx: 'No... that’s wrong.', v: 'ch1CorruptedWorld' },
-  { sp: 'Boundary Breaker', tx: 'Then prove it.', v: 'ch1CorruptedWorld' },
+  // Voice: Game Master 03
+  { sp: 'Game Master', tx: 'Then the vision begins to change. The light fades, the air becomes heavy, and the sky cracks as black thorns spread through the garden paths.', v: 'ch1CorruptedWorld', voice: 'Game_Master_03' },
+  // Voice: Game Master 04
+  { sp: 'Game Master', tx: 'This is more than a nightmare. It is a physical manifestation of what happens when boundaries are not respected.', v: 'ch1CorruptedWorld', voice: 'Game_Master_04' },
+  // Voice: You 02
+  { sp: 'You', tx: 'What... happened?', v: 'ch1CorruptedWorld', voice: 'You_02' },
+  // Voice: Boundary Breaker 01
+  { sp: 'Boundary Breaker', tx: 'Fear makes voices quiet.', v: 'ch1CorruptedWorld', voice: 'Boundary_Breaker_01' },
+  // Voice: You 03
+  { sp: 'You', tx: 'Who are you?', v: 'ch1CorruptedWorld', voice: 'You_03' },
+  // Voice: Boundary Breaker 02
+  { sp: 'Boundary Breaker', tx: 'When they hesitate, I step closer. When they freeze, I call it permission. When they stay silent, I claim victory.', v: 'ch1CorruptedWorld', voice: 'Boundary_Breaker_02' },
+  // Voice: Game Master 05
+  { sp: 'Game Master', tx: 'The more boundaries are broken, the stronger the corruption becomes. If someone ignores their own discomfort, they could be placed in danger.', v: 'ch1CorruptedWorld', voice: 'Game_Master_05' },
+  // Voice: You 04
+  { sp: 'You', tx: 'No... that’s wrong.', v: 'ch1CorruptedWorld', voice: 'You_04' },
+  // Voice: Boundary Breaker 03
+  { sp: 'Boundary Breaker', tx: 'Then prove it.', v: 'ch1CorruptedWorld', voice: 'Boundary_Breaker_03' },
 
-  { sp: 'You', tx: 'Ah—!', v: 'ch1LumaIntro' },
-  { sp: 'Game Master', tx: 'The vision fades. You wake with a gasp as Luma hovers nearby, as if it has been waiting for you.', v: 'ch1LumaIntro' },
+  // Voice: You 05
+  { sp: 'You', tx: 'Ah—!', v: 'ch1LumaIntro', voice: 'You_05' },
+  // Voice: Game Master 06
+  { sp: 'Game Master', tx: 'The vision fades. You wake with a gasp as Luma hovers nearby, as if it has been waiting for you.', v: 'ch1LumaIntro', voice: 'Game_Master_06' },
 
-  { sp: 'You', tx: 'It wasn’t just a dream... it felt real.', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'You saw two versions of the same world. One was safe because people respected each other. The other was corrupted by choices that hurt people.', v: 'ch1Home' },
-  { sp: 'You', tx: 'Luma... what was that thing?', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'The shadow you saw is called The Boundary Breaker. It is born when people’s boundaries are ignored.', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'It feeds on pressure, fear, silence, and moments where someone feels unable to say no.', v: 'ch1Home' },
-  { sp: 'You', tx: 'So the corruption came from people crossing boundaries?', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'Yes. Every time someone ignores another person’s comfort, choice, or safety, the corruption grows stronger.', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'That is why you must learn to notice warning signs early. Discomfort is not something you should push away just to keep someone else happy.', v: 'ch1Home' },
-  { sp: 'You', tx: 'But why would someone stay silent if they were uncomfortable?', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'Because saying no is not always easy. Some freeze. Some fear anger. Some worry things will become awkward. Some do not want to disappoint someone they care about.', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'When someone makes you feel pressured, guilty, trapped, or afraid to say no, that is not care. That is a boundary being tested.', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'Remember this: silence is not consent. Consent must be clear, willing, and freely given.', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'I was sent by BABES, an organisation that supports pregnant teenagers and helps young people make safer, informed decisions.', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'My role is to guide your journey, not by choosing for you, but by helping you think clearly when things feel confusing, awkward, or scary.', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'By the end of this journey, you will learn how to protect your boundaries, respect others, and make decisions that keep you safe.', v: 'ch1Home' },
-  { sp: 'Luma', tx: 'So remember this: you do not need to stay somewhere, agree to something, or silence yourself just to avoid upsetting someone else.', v: 'ch1Home' },
+  // Voice: You 06
+  { sp: 'You', tx: 'It wasn’t just a dream... it felt real.', v: 'ch1Home', voice: 'You_06' },
+  // Voice: Luma 01
+  { sp: 'Luma', tx: 'You saw two versions of the same world. One was safe because people respected each other. The other was corrupted by choices that hurt people.', v: 'ch1Home', voice: 'Luma_01' },
+  // Voice: You 07
+  { sp: 'You', tx: 'Luma... what was that thing?', v: 'ch1Home', voice: 'You_07' },
+  // Voice: Luma 02
+  { sp: 'Luma', tx: 'The shadow you saw is called The Boundary Breaker. It is born when people’s boundaries are ignored.', v: 'ch1Home', voice: 'Luma_02' },
+  // Voice: Luma 03
+  { sp: 'Luma', tx: 'It feeds on pressure, fear, silence, and moments where someone feels unable to say no.', v: 'ch1Home', voice: 'Luma_03' },
+  // Voice: You 08
+  { sp: 'You', tx: 'So the corruption came from people crossing boundaries?', v: 'ch1Home', voice: 'You_08' },
+  // Voice: Luma 04
+  { sp: 'Luma', tx: 'Yes. Every time someone ignores another person’s comfort, choice, or safety, the corruption grows stronger.', v: 'ch1Home', voice: 'Luma_04' },
+  // Voice: Luma 05
+  { sp: 'Luma', tx: 'That is why you must learn to notice warning signs early. Discomfort is not something you should push away just to keep someone else happy.', v: 'ch1Home', voice: 'Luma_05' },
+  // Voice: You 09
+  { sp: 'You', tx: 'But why would someone stay silent if they were uncomfortable?', v: 'ch1Home', voice: 'You_09' },
+  // Voice: Luma 06
+  { sp: 'Luma', tx: 'Because saying no is not always easy. Some freeze. Some fear anger. Some worry things will become awkward. Some do not want to disappoint someone they care about.', v: 'ch1Home', voice: 'Luma_06' },
+  // Voice: Luma 07
+  { sp: 'Luma', tx: 'When someone makes you feel pressured, guilty, trapped, or afraid to say no, that is not care. That is a boundary being tested.', v: 'ch1Home', voice: 'Luma_07' },
+  // Voice: Luma 08
+  { sp: 'Luma', tx: 'Remember this: silence is not consent. Consent must be clear, willing, and freely given.', v: 'ch1Home', voice: 'Luma_08' },
+  // Voice: Luma 09
+  { sp: 'Luma', tx: 'I was sent by BABES, an organisation that supports pregnant teenagers and helps young people make safer, informed decisions.', v: 'ch1Home', voice: 'Luma_09' },
+  // Voice: Luma 10
+  { sp: 'Luma', tx: 'My role is to guide your journey, not by choosing for you, but by helping you think clearly when things feel confusing, awkward, or scary.', v: 'ch1Home', voice: 'Luma_10' },
+  // Voice: Luma 11
+  { sp: 'Luma', tx: 'By the end of this journey, you will learn how to protect your boundaries, respect others, and make decisions that keep you safe.', v: 'ch1Home', voice: 'Luma_11' },
+  // Voice: Luma 12
+  { sp: 'Luma', tx: 'So remember this: you do not need to stay somewhere, agree to something, or silence yourself just to avoid upsetting someone else.', v: 'ch1Home', voice: 'Luma_12' },
 
-  { sp: 'Game Master', tx: 'Later that night, you arrive at the Moonlit Festival. Lanterns glow, music plays, and the crowd feels alive.', v: 'ch1Festival' },
-  { sp: 'Luma', tx: 'The festival should be a place of joy. But corruption often hides inside ordinary moments.', v: 'ch1Festival' },
-  { sp: 'Kael', tx: 'There you are. I’ve been looking for you.', v: 'ch1Festival' },
-  { sp: 'You', tx: 'Kael... you scared me a little.', v: 'ch1Festival' },
-  { sp: 'Kael', tx: 'Then let me make it up to you. Come on, let’s go somewhere quieter.', v: 'ch1Festival' },
-  { sp: 'You', tx: 'We can talk here.', v: 'ch1Festival' },
-  { sp: 'Kael', tx: 'Here? With everyone around? There’s a moon bridge behind the garden. It’s quieter there.', v: 'ch1Festival' },
-  { sp: 'You', tx: 'The moon bridge? Isn’t that far from the festival?', v: 'ch1Festival' },
-  { sp: 'Kael', tx: 'Not far. Don’t worry so much. We have been dating for six months, right? You trust me.', v: 'ch1Festival' },
-  { sp: 'Luma', tx: 'Your heart is hesitating. Notice that feeling.', v: 'ch1Festival' },
+  // Voice: Game Master 07
+  { sp: 'Game Master', tx: 'Later that night, you arrive at the Moonlit Festival. Lanterns glow, music plays, and the crowd feels alive.', v: 'ch1Festival', voice: 'Game_Master_07' },
+  // Voice: Luma 13
+  { sp: 'Luma', tx: 'The festival should be a place of joy. But corruption often hides inside ordinary moments.', v: 'ch1Festival', voice: 'Luma_13' },
+  // Voice: Kael 01
+  { sp: 'Kael', tx: 'There you are. I’ve been looking for you.', v: 'ch1Festival', voice: 'Kael_01' },
+  // Voice: You 10
+  { sp: 'You', tx: 'Kael... you scared me a little.', v: 'ch1Festival', voice: 'You_10' },
+  // Voice: Kael 02
+  { sp: 'Kael', tx: 'Then let me make it up to you. Come on, let’s go somewhere quieter.', v: 'ch1Festival', voice: 'Kael_02' },
+  // Voice: You 11
+  { sp: 'You', tx: 'We can talk here.', v: 'ch1Festival', voice: 'You_11' },
+  // Voice: Kael 03
+  { sp: 'Kael', tx: 'Here? With everyone around? There’s a moon bridge behind the garden. It’s quieter there.', v: 'ch1Festival', voice: 'Kael_03' },
+  // Voice: You 12
+  { sp: 'You', tx: 'The moon bridge? Isn’t that far from the festival?', v: 'ch1Festival', voice: 'You_12' },
+  // Voice: Kael 04
+  { sp: 'Kael', tx: 'Not far. Don’t worry so much. We have been dating for six months, right? You trust me.', v: 'ch1Festival', voice: 'Kael_04' },
+  // Voice: Luma 14
+  { sp: 'Luma', tx: 'Your heart is hesitating. Notice that feeling.', v: 'ch1Festival', voice: 'Luma_14' },
 
-  { sp: 'Game Master', tx: 'You follow Kael along the moonlit path until the music fades behind you.', v: 'ch1Bridge' },
-  { sp: 'You', tx: 'It’s really quiet here.', v: 'ch1Bridge' },
-  { sp: 'Kael', tx: 'That’s the point. Finally, it’s just us.', v: 'ch1Bridge' },
-  { sp: 'You', tx: 'Maybe we shouldn’t stay too long.', v: 'ch1Bridge' },
-  { sp: 'Kael', tx: 'You worry too much.', v: 'ch1Bridge' },
-  { sp: 'You', tx: 'I just feel a little uncomfortable being this far from everyone.', v: 'ch1Bridge' },
-  { sp: 'Kael', tx: 'Uncomfortable? With me?', v: 'ch1Bridge' },
-  { sp: 'You', tx: 'That’s not what I mean...', v: 'ch1Bridge' },
-  { sp: 'Kael', tx: 'Then what do you mean? We’ve been together for six months.', v: 'ch1Bridge' },
+  // Voice: Game Master 08
+  { sp: 'Game Master', tx: 'You follow Kael along the moonlit path until the music fades behind you.', v: 'ch1Bridge', voice: 'Game_Master_08' },
+  // Voice: You 13
+  { sp: 'You', tx: 'It’s really quiet here.', v: 'ch1Bridge', voice: 'You_13' },
+  // Voice: Kael 05
+  { sp: 'Kael', tx: 'That’s the point. Finally, it’s just us.', v: 'ch1Bridge', voice: 'Kael_05' },
+  // Voice: You 14
+  { sp: 'You', tx: 'Maybe we shouldn’t stay too long.', v: 'ch1Bridge', voice: 'You_14' },
+  // Voice: Kael 06
+  { sp: 'Kael', tx: 'You worry too much.', v: 'ch1Bridge', voice: 'Kael_06' },
+  // Voice: You 15
+  { sp: 'You', tx: 'I just feel a little uncomfortable being this far from everyone.', v: 'ch1Bridge', voice: 'You_15' },
+  // Voice: Kael 07
+  { sp: 'Kael', tx: 'Uncomfortable? With me?', v: 'ch1Bridge', voice: 'Kael_07' },
+  // Voice: You 16
+  { sp: 'You', tx: 'That’s not what I mean...', v: 'ch1Bridge', voice: 'You_16' },
+  // Voice: Kael 08
+  { sp: 'Kael', tx: 'Then what do you mean? We’ve been together for six months.', v: 'ch1Bridge', voice: 'Kael_08' },
 
-  { sp: 'Game Master', tx: 'The air turns heavy. The bridge darkens, and thin black vines creep along the rails.', v: 'ch1CorruptedBridge' },
-  { sp: 'You', tx: 'Kael... I don’t think I’m comfortable with this.', v: 'ch1CorruptedBridge' },
-  { sp: 'Kael', tx: 'Don’t make it sound so serious. You came here with me.', v: 'ch1CorruptedBridge' },
-  { sp: 'You', tx: 'I know, but—', v: 'ch1CorruptedBridge' },
-  { sp: 'Kael', tx: 'But what? We’re together. Do you not trust me?', v: 'ch1CorruptedBridge' },
-  { sp: 'Game Master', tx: 'Your chest tightens. Part of you wants to leave, but another part fears hurting him and making everything awkward.', v: 'ch1CorruptedBridge' },
-  { sp: 'Luma', tx: 'Pressure is not consent. You do not have to protect his feelings by ignoring your own.', v: 'ch1CorruptedBridge' },
-  { sp: 'Boundary Breaker', tx: 'If you cannot say no... let him decide.', v: 'ch1CorruptedBridge' },
-  { sp: 'You', tx: 'I...', v: 'ch1CorruptedBridge' },
+  // Voice: Game Master 09
+  { sp: 'Game Master', tx: 'The air turns heavy. The bridge darkens, and thin black vines creep along the rails.', v: 'ch1CorruptedBridge', voice: 'Game_Master_09' },
+  // Voice: You 17
+  { sp: 'You', tx: 'Kael... I don’t think I’m comfortable with this.', v: 'ch1CorruptedBridge', voice: 'You_17' },
+  // Voice: Kael 09
+  { sp: 'Kael', tx: 'Don’t make it sound so serious. You came here with me.', v: 'ch1CorruptedBridge', voice: 'Kael_09' },
+  // Voice: You 18
+  { sp: 'You', tx: 'I know, but—', v: 'ch1CorruptedBridge', voice: 'You_18' },
+  // Voice: Kael 10
+  { sp: 'Kael', tx: 'But what? We’re together. Do you not trust me?', v: 'ch1CorruptedBridge', voice: 'Kael_10' },
+  // Voice: Game Master 10
+  { sp: 'Game Master', tx: 'Your chest tightens. Part of you wants to leave, but another part fears hurting him and making everything awkward.', v: 'ch1CorruptedBridge', voice: 'Game_Master_10' },
+  // Voice: Luma 15
+  { sp: 'Luma', tx: 'Pressure is not consent. You do not have to protect his feelings by ignoring your own.', v: 'ch1CorruptedBridge', voice: 'Luma_15' },
+  // Voice: Boundary Breaker 04
+  { sp: 'Boundary Breaker', tx: 'If you cannot say no... let him decide.', v: 'ch1CorruptedBridge', voice: 'Boundary_Breaker_04' },
+  // Voice: You 19
+  { sp: 'You', tx: 'I...', v: 'ch1CorruptedBridge', voice: 'You_19' },
 ],
     mcqs: [
       {
@@ -1606,6 +1779,49 @@ let choices     = {};
 let lastVidSrc  = null;
 let typeTmr;
 
+
+/* ════════════════════════════════════════
+   STORY VOICEOVER AUDIO
+   - VIDS controls the visual background/video.
+   - VOICES controls MP3 voice files.
+   - Each dialogue line uses: voice: 'Character_01'
+════════════════════════════════════════ */
+const storyVoiceAudio = new Audio();
+storyVoiceAudio.volume = 1;
+storyVoiceAudio.preload = 'auto';
+
+function getVoiceSrc(voiceKey) {
+  if (!voiceKey) return '';
+
+  // Preferred: voice: 'Game_Master_01' → VOICES.Game_Master_01
+  if (VOICES[voiceKey]) return VOICES[voiceKey];
+
+  // Backup: voice can also be a direct MP3 path.
+  if (String(voiceKey).toLowerCase().endsWith('.mp3')) return voiceKey;
+
+  console.warn('Voice key not found in VOICES:', voiceKey);
+  return '';
+}
+
+function playVoice(voiceKey) {
+  const src = getVoiceSrc(voiceKey);
+
+  storyVoiceAudio.pause();
+  storyVoiceAudio.currentTime = 0;
+
+  if (!src) return;
+
+  storyVoiceAudio.src = src;
+  storyVoiceAudio.play().catch(err => {
+    console.warn('Voice could not play. Make sure the file exists and click Start/Continue first.', src, err);
+  });
+}
+
+function stopVoice() {
+  storyVoiceAudio.pause();
+  storyVoiceAudio.currentTime = 0;
+}
+
 /* ════════════════════════════════════════
    LANDING → GENDER SELECT
 ════════════════════════════════════════ */
@@ -1710,7 +1926,7 @@ function setVid(key) {
     const img = document.getElementById('sceneImg');
     if (img) img.style.display = 'none';
     vid.src = src;
-    vid.muted = false;
+    vid.muted = true;
     vid.setAttribute('muted', '');
     vid.loop = true;
     vid.controls = false;
@@ -1732,6 +1948,7 @@ function renderScene() {
   document.getElementById('dlgSpeaker').textContent = s.sp.toUpperCase();
   typeText(document.getElementById('dlgText'), s.tx);
   setVid(s.v);
+  playVoice(s.voice);
   const btn = document.getElementById('storyBtn');
   btn.disabled = false;
   btn.onclick = advanceScene;
@@ -1753,6 +1970,7 @@ function advanceScene() { scenePos++; renderScene(); }
    BOSS INTRO CINEMATIC
 ════════════════════════════════════════ */
 function startBossIntro() {
+  stopVoice();
   switchScreen('story');
 
   const dlgBox = document.querySelector('.dlg-box');
@@ -1780,6 +1998,7 @@ function startBossIntro() {
 }
 
 function playBossArenaVideo() {
+  stopVoice();
   const btn = document.getElementById('storyBtn');
   btn.disabled = true;
 
@@ -2295,6 +2514,7 @@ function esc(t) { const d = document.createElement('div'); d.textContent = t; re
 function goEnd() { switchScreen('end'); }
 
 function switchScreen(id) {
+  if (id !== 'story') stopVoice();
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
